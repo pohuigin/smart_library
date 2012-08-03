@@ -1,0 +1,11 @@
+#The comment character is '#' and the delimiter character is ';'.
+#Active Region Detection Parameters (from higgins et al. 2011)
+#Parameter; Value; Type; Comment
+mdi_noisethresh; 70.0; F; a noise threshold used in processing MDI magnetograms
+mdi_dx; 1.98394; F; arcsecs per px in x direction
+mdi_dy; 1.98394; F; arcsecs per px in y direction
+mdi_rsun; 975.147; F; radius of Sun in arcsecs 
+hmi_noisethresh; 90.0; F; a noise threshold used in processing HMI magnetograms (this one has not been statistically determined)
+doproject; 1; I; do the detection and area calculation in a projected equal shape or area space (projects and then unprojects)
+pdatamag; ~/science/procedures/chole_detect/data/mag/; A; a path pointing to the source data directory for the magnetogram input images
+nan; -NaN; F; handy filler value for not-a-number situations
