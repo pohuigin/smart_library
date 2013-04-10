@@ -1,7 +1,8 @@
 ;Generate a map of the solar disk that is 1 at disk center and goes radially outward as the cos(angle to LOS) 
 ;(= 2 at 60 degrees from LOS)
-;output rrdeg, optionally, which gives degrees from disk center 
-function ar_cosmap, map, rrdeg
+;optionally output:	rrdeg = gives degrees from disk center
+;					wcs = wcs structure from input map file
+function ar_cosmap, map, rrdeg=rrdeg, wcs=wcs
 
 wcs=fitshead2wcs(map)
 coord=wcs_get_coord(wcs)
