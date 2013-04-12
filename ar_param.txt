@@ -9,3 +9,8 @@ hmi_noisethresh; 90.0; F; a noise threshold used in processing HMI magnetograms 
 doproject; 1; I; do the detection and area calculation in a projected equal shape or area space (projects and then unprojects)
 pdatamag; ~/science/procedures/chole_detect/data/mag/; A; a path pointing to the source data directory for the magnetogram input images
 nan; -NaN; F; handy filler value for not-a-number situations
+gradthreshw; 50.; F; Gradient threshold (for PSL detection?)
+gradthreshs; 150.; F; Gradient threshold for strong polarity separation lines?
+smoothpole; 5.; F; Threshold for polarity blob counting. smoothing radius/FWHM for AR prior to polarity counting
+threshpole; .1; F; fraction of total area covered by a given (+ or -) polarity, below which, the detection will be considered monopolar
+
