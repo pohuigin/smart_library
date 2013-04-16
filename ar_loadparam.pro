@@ -13,7 +13,7 @@ if file_exist(fparam) ne 1 then begin
 endif
 
 ;Read parameters from meta data file
-readcol, fparam, param, val, type, meta, comment='#', format='A,A,A,A', delim=';'
+readcol, fparam, param, val, type, meta, comment='#', format='A,A,A,A', delim=';',/silent
 param=strtrim(param,2)
 val=strtrim(val,2)
 type=strtrim(type,2)

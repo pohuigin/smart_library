@@ -2,7 +2,8 @@
 ;(= 2 at 60 degrees from LOS)
 ;optionally output:	rrdeg = gives degrees from disk center
 ;					wcs = wcs structure from input map file
-function ar_cosmap, map, rrdeg=rrdeg, wcs=wcs
+;					offlimb = map of 1=on-disk and 0=off-disk
+function ar_cosmap, map, rrdeg=rrdeg, wcs=wcs, offlimb=offlimb
 
 wcs=fitshead2wcs(map)
 coord=wcs_get_coord(wcs)
@@ -13,6 +14,12 @@ coscor=rr
 rrdeg=asin(coscor/map.rsun)
 coscor=1./cos(rrdeg)
 coscor[where(rr gt map.rsun)]=1.
+
+offlimb=rr
+offlimb[where(rr ge map.rsun)]=0
+offlimb[where(rr lt map.rsun)]=1
+
+;stop
 
 cosmap=coscor
 return, cosmap

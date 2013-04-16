@@ -7,7 +7,7 @@
 ;If RADIUS is set then the FWHM of the gaussian will be half that.
 ;If FWHM is set, then RADIUS will be twice that.
 
-function ar_grow, arr, radius=radius, gaus=gaus, fwhm=fwhm, _extra=_extra
+function ar_grow, arr, radius=radius, gaus=gaus, fwhm=fwhm, _extra=_extra, kernal=outkernal
 
 arr0=arr
 
@@ -19,14 +19,21 @@ endif else fwhm=radius0;/2.
 gsig=fwhm/(SQRT(2.*ALOG(2.)))
 
 if keyword_set(gaus) then imgsz=[2,4.*radius0,4.*radius0] else imgsz=[2,2.*radius0,2.*radius0]
+
+;make sure the kernal has an odd number of elements
+if imgsz[1] mod 2 eq 0 then imgsz[1]=imgsz[1]+1
+if imgsz[2] mod 2 eq 0 then imgsz[2]=imgsz[2]+1
+
 struc=fltarr(imgsz[1],imgsz[2])
 
 ;Generate coordinate maps.
-xcoord=rot(congrid(transpose(findgen(imgsz[1])),imgsz[1],imgsz[2]),90)
+xcoord=rot(rebin(transpose(findgen(imgsz[1])),imgsz[1],imgsz[2]),90)
 ycoord=rot(xcoord,-90)
 rcoord=sqrt((xcoord-imgsz[1]/2.)^2.+(ycoord-imgsz[2]/2.)^2)
 
 struc[where(rcoord le radius0)]=1.
+
+;stop
 
 if keyword_set(gaus) then begin
 	;gparams[0] = maximum value (factor) of Gaussian,
@@ -44,6 +51,7 @@ if keyword_set(gaus) then begin
 
 	;Normalize GSTRUC so that the volume is 1
 	gstruc=gstruc/total(gstruc)
+	outkernal=gstruc
 
 	grownarr=CONVOL( arr0, gstruc, _extra=_extra); < 1.
 	

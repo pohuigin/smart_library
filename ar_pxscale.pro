@@ -25,7 +25,7 @@ retmmppx=(arcppx/arcpsun)*mmpsun ;in Mm/px
 
 if keyword_set(mmppx) then return, retmmppx
 
-if keyword_set(cmppx) then return, retmmppx*1d8
+if keyword_set(cmppx) then return, retmmppx*1d16
 
 if keyword_set(asecppx) then return, map.dx
 
