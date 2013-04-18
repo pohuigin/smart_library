@@ -11,7 +11,7 @@ function ar_processmag, inmap, $
 map=inmap
 dat=map.data
 
-stop
+;stop
 
 ;Clean NaNs
 if not keyword_set(nofinite) then $
