@@ -18,13 +18,14 @@ if not keyword_set(nofinite) then $
 	if (where(finite(dat) ne 1))[0] ne -1 then dat[where(finite(dat) ne 1)]=0.
 
 ;Get the cosine map and off-limb pixel map using WCS
-cosmap=ar_cosmap(map, rrdeg=rrdeg); , offlimb=offlimb)
+cosmap=ar_cosmap(map, rrdeg=rrdeg, offlimb=offlimb,/edge)
 
 ;zero off-limb pixels
 ;zero from 80 degrees to LOS
 if not keyword_set(noofflimb) then begin
-	wofflimb=where(rrdeg ge 80.)
+	wofflimb=where(rrdeg/2./!pi*360. ge 80.)
 	if wofflimb[0] ne -1 then dat[wofflimb]=0.
+	dat=dat*offlimb
 endif
 
 ;Median filter noisy values

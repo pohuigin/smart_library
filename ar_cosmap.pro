@@ -6,7 +6,7 @@
 ;					edgefudge = take off an extra half percent from the disk to get rid of limb effects
 function ar_cosmap, map, rrdeg=rrdeg, wcs=wcs, offlimb=offlimb, edgefudge=edgefudge
 
-if keyword_set(edgefudge) then fudge=0.995 else fudge=1.
+if keyword_set(edgefudge) then fudge=0.999 else fudge=1.
 
 wcs=fitshead2wcs(map)
 coord=wcs_get_coord(wcs)
