@@ -17,7 +17,8 @@ gradthreshs; 150.; F; Gradient threshold for strong polarity separation lines?
 #
 #HMI SMART detection based on pixel size determined from map structure and supergranule physical size
 smoothphys; 16.; F; Physical gaussian smoothing HWHM in Mm. The radius of a characteristic supergranule 
-hmi_noisethresh; 10.0; F; a noise threshold used in processing HMI magnetograms (Determined from HMI QS study: http://pohuiginlabnotes.wordpress.com/2013/04/18/hmi-qs-characterisation/ )
+smooththresh; 10.0; F; a segmentation threshold used in processing HMI magnetograms (for 1kx1k gaussian smoothed; Determined from HMI QS study: http://pohuiginlabnotes.wordpress.com/2013/04/18/hmi-qs-characterisation/ )
+magthresh; 200.0; F; a secondary segmentation threshold used to find all flux fragments in an image
 #
 #Physical Constants
 cmpmm; 1d16; F; Number centimeters in a mega meter
