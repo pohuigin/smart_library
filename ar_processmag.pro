@@ -5,7 +5,7 @@
 ;	Does Cosine correction
 ;	Do median filter
 ; 	Rotate solar north = up
-function ar_processmag, inmap, $
+function ar_processmag, inmap, limbmask=limbmask, $
 	nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate
 
 map=inmap
@@ -19,6 +19,7 @@ if not keyword_set(nofinite) then $
 
 ;Get the cosine map and off-limb pixel map using WCS
 cosmap=ar_cosmap(map, rrdeg=rrdeg, offlimb=offlimb,/edge)
+limbmask=offlimb
 
 ;zero off-limb pixels
 ;zero from 80 degrees to LOS

@@ -18,7 +18,7 @@ if n_elements(fwhm) gt 0 then begin
 endif else fwhm=radius0;/2.
 gsig=fwhm/(SQRT(2.*ALOG(2.)))
 
-if keyword_set(gaus) then imgsz=[2,4.*radius0,4.*radius0] else imgsz=[2,2.*radius0,2.*radius0]
+if keyword_set(gaus) then imgsz=[2,4.*radius0,4.*radius0] else imgsz=[2,3.*radius0,3.*radius0]
 
 ;make sure the kernal has an odd number of elements
 if imgsz[1] mod 2 eq 0 then imgsz[1]=imgsz[1]+1
@@ -31,7 +31,12 @@ xcoord=rot(rebin(transpose(findgen(imgsz[1])),imgsz[1],imgsz[2]),90)
 ycoord=rot(xcoord,-90)
 rcoord=sqrt((xcoord-imgsz[1]/2.)^2.+(ycoord-imgsz[2]/2.)^2)
 
+;The kernal apparently needs to be shifted left and down by 1 pixel
+rcoord=shift(rcoord,[-1,-1])
+
 struc[where(rcoord le radius0)]=1.
+
+outkernal=struc
 
 ;stop
 
