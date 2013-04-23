@@ -48,7 +48,9 @@ map.data=dat
 ;Rotate solar north = up
 if not keyword_set(norotate) then $
 	map=rot_map(map,(-map.roll_angle))
-
+	maptag=strlowcase(tag_names(map))
+	if (where(maptag eq 'crota'))[0] ne -1 then map.crota=0.
+	if (where(maptag eq 'crota2'))[0] ne -1 then map.crota2=0.
 return, map
 
 end
