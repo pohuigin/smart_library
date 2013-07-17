@@ -8,7 +8,7 @@ function ar_cosmap, map, rrdeg=rrdeg, wcs=wcs, offlimb=offlimb, edgefudge=edgefu
 
 if keyword_set(edgefudge) then fudge=0.999 else fudge=1.
 
-wcs=fitshead2wcs(map)
+wcs=map.wcs ;fitshead2wcs(map.index)
 coord=wcs_get_coord(wcs)
 xx=reform(coord[0,*,*])
 yy=reform(coord[1,*,*])
