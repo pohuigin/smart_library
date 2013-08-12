@@ -11,7 +11,7 @@ if n_elements(edgefudge) eq 1 then begin
    if edgefudge ne 1 then fudge=edgefudge
 endif else fudge=1.
 
-wcs=fitshead2wcs(map)
+wcs=map.wcs ;fitshead2wcs(map.index)
 coord=wcs_get_coord(wcs)
 xx=reform(coord[0,*,*])
 yy=reform(coord[1,*,*])
@@ -19,11 +19,14 @@ rr=(xx^(2.)+yy^(2.))^(0.5)
 coscor=rr
 rrdeg=asin(coscor/map.rsun)
 coscor=1./cos(rrdeg)
-coscor[where(rr gt map.rsun*fudge)]=1.
+wgt=where(rr gt map.rsun*fudge)
+if wgt[0] ne -1 then coscor[wgt]=1.
 
 offlimb=rr
-offlimb[where(rr ge map.rsun*fudge)]=0
-offlimb[where(rr lt map.rsun*fudge)]=1
+wgtrr=where(rr ge map.rsun*fudge)
+if wgtrr[0] ne -1 then offlimb[wgtrr]=0
+wltrr=where(rr lt map.rsun*fudge)
+if wltrr[0] ne -1 then offlimb[wltrr]=1
 
 ;stop
 outcoord=coord
