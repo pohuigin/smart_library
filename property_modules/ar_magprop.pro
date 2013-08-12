@@ -22,6 +22,9 @@ blankstr={areabnd:0d, posareabnd:0d, negareabnd:0d, posarea:0d, negarea:0d, tota
           bmax:0d, bmin:0d, bmean:0d, $
           totflx:0d, imbflx:0d, frcflx:0d, negflx:0d, posflx:0d}
 
+if data_type(mask) ne 8 then begin
+   maskstr=map & maskstr.data=mask & mask=maskstr
+endif
 nmask=max(mask.data)
 
 strarr=replicate(blankstr,nmask)
