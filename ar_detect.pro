@@ -6,7 +6,9 @@
 ;DOPROCESS = set to do the above processing
 ;MAPPROC = Pull out the processed map
 ;REBIN1k = Do the detections on a magnetogram rebinned to 1kx1k
-;STATUS = output keyword indicating whether detections were found or not
+;STATUS = output keyword indicating whether detections were found or
+;not
+;		       -1 - The initialised value
 ;			0 - Detections were found
 ;			1 - No detections found in gaussian mask (aborted)
 ;			2 - Detections might be found, but fragment mask had no detections
@@ -15,12 +17,12 @@
 
 
 function ar_detect, inmap, doprocess=doprocess, mapproc=mapproc, rebin4k21k=rebin4k21k, reduce=reducemap, $
-	params=inparams, doplot=doplot, status=status
+	params=inparams, doplot=doplot, status=status, cosmap=cosmap, limbmask=limbmask
 map=inmap
 
-status=0
+status=-1
 
-if keyword_set(params) then params=inparams $
+if data_type(inparams) eq 8 then params=inparams $
 	else params=ar_loadparam() ;get the default SMART parameter list
 	
 cmpmm=params.cmpmm ;cm per Mm
@@ -29,10 +31,10 @@ szorig=size(map.data,/dim)
 
 ;DO PROCESSING ON MAGNETOGRAM------------------------------------------------->
 if keyword_set(doprocess) then begin
-	map=ar_processmag(map, _extra=_extra)
+	map=ar_processmag(map, _extra=_extra, cosmap=cosmap,limbmask=limbmask)
 ;		nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate
-	mapproc=map
 endif
+mapproc=map
 
 ;initialise blank mask map
 maskmap=map & maskmap.data=fltarr(szorig[0],szorig[1])
@@ -91,7 +93,7 @@ if wgrow[0] eq -1 then begin
 endif else grmask[wgrow]=1
 
 
-;Mask the offlimb pixels
+;Mask the offlimb pixels using /EDGE fudging
 dum=ar_cosmap(map, offlimb=limbmask, /edge)
 grmask=grmask*limbmask
 
@@ -134,7 +136,7 @@ maskorder=fltarr(szorig[0],szorig[1])
 for i=0,nar-1 do begin
 	rank=reverse(arind[sort(arnpix)])
 	
-	maskorder[where(maskfull eq rank[i])]=i+1.
+	maskorder[where(maskfull eq rank[i])]=i
 
 endfor
 

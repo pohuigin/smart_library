@@ -5,7 +5,7 @@
 ;	Does Cosine correction
 ;	Do median filter
 ; 	Rotate solar north = up
-function ar_processmag, inmap, limbmask=limbmask, $
+function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, $
 	nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate
 
 map=inmap
