@@ -5,13 +5,34 @@
 ;	Does Cosine correction
 ;	Do median filter
 ; 	Rotate solar north = up
-function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, $
-	nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate
+function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, nocosmicray=nocosmicray, $
+	nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam
 
 map=inmap
 dat=map.data
+imgsz=size(dat,/dim)
 
-;stop
+param=ar_loadparam(fparam=fparam)
+
+;Search for cosmic rays using hard threshold. Remove if gt 3sig detection than neighbooring pixels
+if param.docosmicray then begin	
+
+	wcosmic=where(dat gt param.cosmicthresh)
+	ncosmic=n_elements(wcosmic)
+	print,'Cosmic Ray Candidates Found: ',ncosmic
+	n=0
+	if wcosmic[0] ne -1 then begin
+		for i=0l,ncosmic-1l do begin
+			wcx=wcosmic mod imgsz[0]
+			wcy=wcosmic/imgsz[0]
+			wneighboorx=wcx[0]+long([-1,0,1,1,1,0,-1,-1])
+			wneighboory=wcy[0]+long([1,1,1,0,-1,-1,-1,0])
+			if dat[wcosmic[i]] ge (3*stddev(dat[wneighboorx,wneighboory])+mean(dat[wneighboorx,wneighboory])) $
+				then dat[wcosmic[i]]=mean(dat[wneighboorx,wneighboory])
+		endfor
+	endif
+endif
+	
 
 ;Clean NaNs
 if not keyword_set(nofinite) then $

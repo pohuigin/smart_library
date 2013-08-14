@@ -4,7 +4,7 @@
 pro ar_setup, ar_path=inar_path, ar_param=inar_param, $
 	get=get, defvars=outvars, status=outstatus
 
-readcol,''
+;readcol,''
 
 ;Set default variables
 sysvars={ar_path:['!AR_PATH','~/science/procedures/smart_auxiliary/'], ar_param:['!AR_PARAM','ar_param.txt']}

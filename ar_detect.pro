@@ -30,6 +30,8 @@ cmpmm=params.cmpmm ;cm per Mm
 szorig=size(map.data,/dim)
 
 ;DO PROCESSING ON MAGNETOGRAM------------------------------------------------->
+if not params.domedianfilt then nofilter=1
+
 if keyword_set(doprocess) then begin
 	map=ar_processmag(map, _extra=_extra, cosmap=cosmap,limbmask=limbmask)
 ;		nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate
@@ -105,7 +107,9 @@ if keyword_set(doplot) then begin
 	setcolors,/sys
 	contour,mask,level=0.5,color=!blue,/over
 	contour,grmask,level=0.5,color=!red,/over
+
 stop
+
 endif
 
 if total(grmask) eq 0 then begin

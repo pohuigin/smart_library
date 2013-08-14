@@ -12,6 +12,8 @@ if file_exist(fparam) ne 1 then begin
 	return,''
 endif
 
+if not silent then print,'% AR_LOADPARAM: AR Parameter File is '+fparam
+
 ;Read parameters from meta data file
 readcol, fparam, param, val, type, meta, comment='#', format='A,A,A,A', delim=';',/silent
 param=strtrim(param,2)

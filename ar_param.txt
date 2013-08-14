@@ -3,11 +3,20 @@
 #Some are new for HMI and not discussed in the paper... to be published...
 #
 #Parameter; Value; Type; Comment
+#
+#These may be used if a FITS header is missing
 mdi_noisethresh; 70.0; F; a noise threshold used in processing MDI magnetograms
 mdi_dx; 1.98394; F; arcsecs per px in x direction
 mdi_dy; 1.98394; F; arcsecs per px in y direction
 mdi_rsun; 975.147; F; radius of Sun in arcsecs 
+#
+#Switches
 doproject; 0; I; do the detection and area calculation in a projected equal shape or area space (projects and then unprojects)
+docosmicray; 1; I; do cosmic ray detection and fill in with NaN
+#
+#Magnetogram Processing
+cosmicthresh; 5000.; F; A hard threshold for detecting cosmic rays
+#
 pdatamag; ~/science/procedures/chole_detect/data/mag/; A; a path pointing to the source data directory for the magnetogram input images
 nan; -NaN; F; handy filler value for not-a-number situations
 smoothpole; 5.; F; Threshold for polarity blob counting. smoothing radius/FWHM in pixels for AR prior to polarity counting
