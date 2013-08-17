@@ -8,16 +8,16 @@
 ;REBIN1k = Do the detections on a magnetogram rebinned to 1kx1k
 ;STATUS = output keyword indicating whether detections were found or
 ;not
-;		       -1 - The initialised value
+;		   -1 - The initialised value
 ;			0 - Detections were found
 ;			1 - No detections found in gaussian mask (aborted)
-;			2 - Detections might be found, but fragment mask had no detections
-;			3 - Region-grown mask had no detections (shouldn't occur... might mean error in code)
-;			4 - Final indexed mask had no detections (shouldn't occur... might mean error in code)
+;			2 - No detections found and fragment mask had no detections (souldn't occur- in this case status should be 0 if there were detections and 1 if no detections)
+;			3 - Region-grown mask had no detections (aborted; shouldn't occur... might mean error in code)
+;			4 - Final indexed mask had no detections (aborted; shouldn't occur... might mean error in code)
 
 
 function ar_detect, inmap, doprocess=doprocess, mapproc=mapproc, rebin4k21k=rebin4k21k, reduce=reducemap, $
-	params=inparams, doplot=doplot, status=status, cosmap=cosmap, limbmask=limbmask
+	params=inparams, doplot=doplot, status=status, cosmap=cosmap, limbmask=limbmask, nofilter=nofilter, _extra=_extra
 map=inmap
 
 status=-1
@@ -33,8 +33,13 @@ szorig=size(map.data,/dim)
 if not params.domedianfilt then nofilter=1
 
 if keyword_set(doprocess) then begin
-	map=ar_processmag(map, _extra=_extra, cosmap=cosmap,limbmask=limbmask)
-;		nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate
+
+;process for detecting fragments to use for growing (no cosine correction)
+	mapfrag=ar_processmag(map, _extra=_extra, cosmap=cosmap,limbmask=limbmask, nofilter=nofilter, /nocosine)
+
+;do the rest of the processing (for main smoothed detection) 
+	map=ar_processmag(mapfrag, _extra=_extra, cosmap=cosmap,limbmask=limbmask, /nofilter,/nofinite,/noofflimb,/norotate,/nocosmic)
+
 endif
 mapproc=map
 
@@ -79,7 +84,7 @@ growrad=smoothhwhm/2.
 
 fragmask=fltarr(sz[0],sz[1])
 
-wfrag=where(abs(map.data) ge magthresh)
+wfrag=where(abs(mapfrag.data) ge magthresh)
 if wfrag[0] ne -1 then fragmask[wfrag]=1
 
 smfragmask=ar_grow(fragmask,rad=growrad)
@@ -159,6 +164,8 @@ if keyword_set(doplot) then begin
 	plot_map,maskmap,/limb
 stop
 endif
+
+if nar gt 0 then status=0
 
 return,maskmap
 

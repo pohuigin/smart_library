@@ -6,7 +6,7 @@
 ;	Do median filter
 ; 	Rotate solar north = up
 function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, nocosmicray=nocosmicray, $
-	nocos=nocos, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam
+	nocosine=nocosine, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam
 
 map=inmap
 dat=map.data
@@ -15,7 +15,7 @@ imgsz=size(dat,/dim)
 param=ar_loadparam(fparam=fparam)
 
 ;Search for cosmic rays using hard threshold. Remove if gt 3sig detection than neighbooring pixels
-if param.docosmicray then begin	
+if param.docosmicray and not keyword_set(nocosmicray) then begin	
 
 	wcosmic=where(dat gt param.cosmicthresh)
 	ncosmic=n_elements(wcosmic)
@@ -53,12 +53,13 @@ endif
 ;Median filter noisy values
 ;Do a 3x3 median filter
 if not keyword_set(nofilter) then begin
-	dat=filter_image(dat,/MEDIAN)
+	medianw=param.medfiltwidth
+	dat=filter_image(dat,median=medianw)
 endif
 
 ;Do magnetic field cosine correction
 ;Limit correction to having 1 pixel at edge of the Sun
-if not keyword_set(nocos) then begin
+if not keyword_set(nocosine) then begin
 	coscorlim=ar_coscorlim(map)
 	cosmap=cosmap < coscorlim
 	dat=dat*cosmap
