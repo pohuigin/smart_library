@@ -14,6 +14,8 @@ imgsz=size(dat,/dim)
 
 param=ar_loadparam(fparam=fparam)
 
+indextag=strlowcase(tag_names(map))
+
 ;Search for cosmic rays using hard threshold. Remove if gt 3sig detection than neighbooring pixels
 if param.docosmicray and not keyword_set(nocosmicray) then begin	
 
@@ -35,8 +37,13 @@ endif
 	
 
 ;Clean NaNs
-if not keyword_set(nofinite) then $
-	if (where(finite(dat) ne 1))[0] ne -1 then dat[where(finite(dat) ne 1)]=0.
+if not keyword_set(nofinite) then begin
+	wnan=where(finite(dat) ne 1)
+	if wnan[0] ne -1 then begin
+		dat[wnan]=-9999.
+		fill_missing, dat, -9999.
+	endif
+endif
 
 ;Get the cosine map and off-limb pixel map using WCS
 cosmap=ar_cosmap(map, rrdeg=rrdeg, offlimb=offlimb,/edge)
@@ -52,7 +59,7 @@ endif
 
 ;Median filter noisy values
 ;Do a 3x3 median filter
-if not keyword_set(nofilter) then begin
+if param.domedianfilt and not keyword_set(nofilter) then begin
 	medianw=param.medfiltwidth
 	dat=filter_image(dat,median=medianw)
 endif
@@ -68,12 +75,13 @@ endif
 map.data=dat
 
 ;Rotate solar north = up
-if not keyword_set(norotate) then $
+if not keyword_set(norotate) then begin
 	map=rot_map(map,(-map.roll_angle))
 	maptag=strlowcase(tag_names(map))
-	indextag=strlowcase(tag_names(map))
 	if (where(indextag eq 'crota'))[0] ne -1 then map.index.crota=0.
 	if (where(indextag eq 'crota2'))[0] ne -1 then map.index.crota2=0.
+endif
+
 return, map
 
 end

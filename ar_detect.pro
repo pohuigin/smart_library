@@ -4,6 +4,11 @@
 ;	-magnetic field values cosine corrected
 ;	-offlimb pixels zeroed
 ;DOPROCESS = set to do the above processing
+;
+;	If running MDI data, it is suggested to read in raw magnetograms and 
+;	set /DOPROCESS because the smoothed and unsmoothed masks will use 
+; 	different processing due to the MDI noise problem.
+;
 ;MAPPROC = Pull out the processed map
 ;REBIN1k = Do the detections on a magnetogram rebinned to 1kx1k
 ;STATUS = output keyword indicating whether detections were found or
@@ -17,13 +22,13 @@
 
 
 function ar_detect, inmap, doprocess=doprocess, mapproc=mapproc, rebin4k21k=rebin4k21k, reduce=reducemap, $
-	params=inparams, doplot=doplot, status=status, cosmap=cosmap, limbmask=limbmask, nofilter=nofilter, _extra=_extra
+	params=inparams, fparam=fparam, doplot=doplot, status=status, cosmap=cosmap, limbmask=limbmask, nofilter=nofilter, _extra=_extra
 map=inmap
 
 status=-1
 
 if data_type(inparams) eq 8 then params=inparams $
-	else params=ar_loadparam() ;get the default SMART parameter list
+	else params=ar_loadparam(fparam=fparam) ;get the default SMART parameter list
 	
 cmpmm=params.cmpmm ;cm per Mm
 
@@ -40,7 +45,7 @@ if keyword_set(doprocess) then begin
 ;do the rest of the processing (for main smoothed detection) 
 	map=ar_processmag(mapfrag, _extra=_extra, cosmap=cosmap,limbmask=limbmask, /nofilter,/nofinite,/noofflimb,/norotate,/nocosmic)
 
-endif
+endif else mapfrag=map
 mapproc=map
 
 ;initialise blank mask map
