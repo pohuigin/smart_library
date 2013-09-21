@@ -34,10 +34,12 @@ for i=1,nmask do begin
 ;Zero pixels outside of detection boundary
    thismask=mask.data
    wzero=where(mask.data ne i)
-   thismask[wzero]=0
+   if wzero[0] ne -1 then $
+      thismask[wzero]=0
    
    thisdat=map.data
-   thisdat[wzero]=0
+   if wzero[0] ne -1 then $
+      thisdat[wzero]=0
 
    thisabs=abs(thisdat)
 
