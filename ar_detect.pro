@@ -27,6 +27,7 @@ map=inmap
 
 status=-1
 
+
 if data_type(inparams) eq 8 then params=inparams $
 	else params=ar_loadparam(fparam=fparam) ;get the default SMART parameter list
 	
@@ -40,10 +41,10 @@ if not params.domedianfilt then nofilter=1
 if keyword_set(doprocess) then begin
 
 ;process for detecting fragments to use for growing (no cosine correction)
-	mapfrag=ar_processmag(map, _extra=_extra, cosmap=cosmap,limbmask=limbmask, nofilter=nofilter, /nocosine)
+	mapfrag=ar_processmag(map, _extra=_extra, cosmap=cosmap,limbmask=limbmask, nofilter=nofilter, /nocosine, params=params, fparam=fparam)
 
 ;do the rest of the processing (for main smoothed detection) 
-	map=ar_processmag(mapfrag, _extra=_extra, cosmap=cosmap,limbmask=limbmask, /nofilter,/nofinite,/noofflimb,/norotate,/nocosmic)
+	map=ar_processmag(mapfrag, _extra=_extra, cosmap=cosmap,limbmask=limbmask, /nofilter,/nofinite,/noofflimb,/norotate,/nocosmic, params=params, fparam=fparam)
 
 endif else mapfrag=map
 mapproc=map

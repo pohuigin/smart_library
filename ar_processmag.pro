@@ -6,13 +6,14 @@
 ;	Do median filter
 ; 	Rotate solar north = up
 function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, nocosmicray=nocosmicray, $
-	nocosine=nocosine, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam
+	nocosine=nocosine, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam, params=inparams
 
 map=inmap
 dat=map.data
 imgsz=size(dat,/dim)
 
-param=ar_loadparam(fparam=fparam)
+if data_type(inparams) eq 8 then param=inparams else param=ar_loadparam(fparam=fparam)
+
 
 indextag=strlowcase(tag_names(map))
 
@@ -41,7 +42,7 @@ if not keyword_set(nofinite) then begin
 	wnan=where(finite(dat) ne 1)
 	if wnan[0] ne -1 then begin
 		dat[wnan]=-9999.
-		fill_missing, dat, -9999.
+		fill_missing, dat, -9999.,1
 	endif
 endif
 
