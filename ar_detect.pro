@@ -10,7 +10,7 @@
 ; 	different processing due to the MDI noise problem.
 ;
 ;MAPPROC = Pull out the processed map
-;REBIN1k = Do the detections on a magnetogram rebinned to 1kx1k
+;REBIN4k21k = Do the detections on a magnetogram rebinned to 1kx1k
 ;STATUS = output keyword indicating whether detections were found or
 ;not
 ;		   -1 - The initialised value
@@ -54,8 +54,9 @@ maskmap=map & maskmap.data=fltarr(szorig[0],szorig[1])
 
 ;Optionally set the ammount to reduce the size of the array by or
 ;perform the detections on a 4kx4k map reduced to 1kx1k map
-if keyword_set(rebin4k21k) then reducemap=[4,4]
-map=map_rebin(map,reduce=reducemap)
+if keyword_set(rebin4k21k) then rebin1k=1 
+; else reducemap=[4,4]
+map=map_rebin(map,reduce=reducemap, rebin1k=rebin1k)
 
 ;stop
 
@@ -141,26 +142,22 @@ maskfull=label_region(maskfull)
 ;stop
 
 ;Order the detections by number of pixels
-nar=max(maskfull)
-arnpix=histogram(maskfull,bin=1,loc=arind)
+maskorder=ar_order_mask(maskfull)
 
-maskorder=fltarr(szorig[0],szorig[1])
+nar=max(maskorder)
 
-;stop
+;arnpix=histogram(maskfull,bin=1,loc=arind)
+;maskorder=fltarr(szorig[0],szorig[1])
+;for i=0,nar-1 do begin
+;	rank=reverse(arind[sort(arnpix)])
+;	maskorder[where(maskfull eq rank[i])]=i
+;endfor
 
-for i=0,nar-1 do begin
-	rank=reverse(arind[sort(arnpix)])
-	
-	maskorder[where(maskfull eq rank[i])]=i
-
-endfor
-
-;stop
 
 maskmap=mapproc
 maskmap.data=maskorder
 
-if total(maskorder) eq 0 then begin
+if nar eq 0 then begin
 	status=4
 	return,maskmap
 endif

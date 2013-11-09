@@ -5,8 +5,13 @@
 ;	Does Cosine correction
 ;	Do median filter
 ; 	Rotate solar north = up
+;
+;Keywords:
+;	MAXLIMB = set to degrees from disk centre at which to crop the limb
+
 function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, nocosmicray=nocosmicray, $
-	nocosine=nocosine, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam, params=inparams
+	nocosine=nocosine, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam, params=inparams, $
+	maxlimb=inmaxlimb
 
 map=inmap
 dat=map.data
@@ -53,8 +58,10 @@ limbmask=offlimb
 ;zero off-limb pixels
 ;zero from 80 degrees to LOS
 if not keyword_set(noofflimb) then begin
-	wofflimb=where(rrdeg/2./!pi*360. ge 80.)
+	if n_elements(inmaxlimb) eq 1 then maxlimb=inmaxlimb else maxlimb=80.
+	wofflimb=where(rrdeg/2./!pi*360. ge maxlimb)
 	if wofflimb[0] ne -1 then dat[wofflimb]=0.
+	if wofflimb[0] ne -1 then limbmask[wofflimb]=0. ;for outputting limbmask to be consistent with how the data is cropped
 	dat=dat*offlimb
 endif
 
