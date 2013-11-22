@@ -4,4 +4,6 @@
 #Structure ID; Format Key String; List of tag names; Meta info
 ar_chk_file; A,A,A,A,LL,F,F,L,F,F,I,D,I,I; datafile,locfile,maskfile,date,tim,tot,mean,nan,d00,v00,interval,roll_angle,nar,status; Information about MDI files obtained as they are read-in and information about the ARs detected by SMART in the images. See RUN_SMART2_MDIDETECT_ALL
 ar_detect; A,I,LL,D,D,D,D,D,D,D,D; datafile,arid,narpx,arpxposx,arpxposy,arhcposx,arhcposy,arpxwidthx,arpxwidthy,arhcwidthx,arhcwidthy; Basic information about detected features. See RUN_SMART2_MDIDETECT_ALL
-ar_track_yafta; A,L,L,L,L; datafile,arid,yaftaid,src,trm; Tracking information obtained from YAFTA. Indicates if the feature merged, split, emerged, dissappeared, and its persistent tracking name. See: AR_TRACK_YAFTA 
+ar_chk_core; A,A,A,L,L,L,L,L,L; datafile,maskfile,date,tim,ncore,npsl,nsmart,nsmconn,status; Full-disk information for core detections. See RUN_SMART2_MDIDETECT_CORE_ALL
+ar_detect_core; A,L,L,L,L,L,L,A,D,D,D,D,D,D,D,D; datafile,arid,narpx,narpslpx,narpsl,npx_conn,ncore_conn,arid_conn,arpxposx,arpxposy,arhcposx,arhcposy,arpxwidthx,arpxwidthy,arhcwidthx,arhcwidthy; Basic information about each detected AR core. See RUN_SMART2_MDIDETECT_CORE_ALL
+ar_track_yafta; A,L,L,L,L,L; datafile,step,arid,yaftaid,src,trm; Tracking information obtained from YAFTA. Indicates if the feature merged, split, emerged, dissappeared, and its persistent tracking name. See: AR_TRACK_YAFTA 

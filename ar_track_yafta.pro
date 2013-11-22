@@ -45,7 +45,16 @@
 function ar_track_yafta,state,magstack=inmags,maskstack=insmmask, $
 	mdimeta=inthissmart,smartmeta=inmdimetastrar, $
 	params=inparams, fparam=fparam, $
-	doplot=doplot, plotdir=plotdir
+	doplot=doplot, plotdir=plotdir, $
+	outsingle=outsingle 	;out put a single map if there was only one on the day
+								;so that it can be included with the next set and still be useful
+
+if data_type(inparams) eq 8 then params=inparams $
+	else params=ar_loadparam(fparam=fparam) ;get the default SMART parameter list
+
+outsinglemap=''
+
+help,state,/str
 
 mags=inmags
 smmask=insmmask
@@ -58,17 +67,27 @@ yaftastrblank=ar_struct_init(yaftaformat,structid='ar_track_yafta')
 if data_type(state) eq 8 then begin
 ;This is for a continued run...
 
-stop
-
 ;Pull out the variables for the current YAFTA run
 
 	mgram1 = state.mgram1
 	ar_mask1 = state.ar_mask1
 	ars1 = state.ars1
+	ip1 = state.ip1 ;saves the last tracking 'step'
 
 	if data_type(ars1) ne 8 then undefine,ars1
 	
 	tlastarsfound = state.tlastarsfound
+
+;!!! Will need to add the following check into the loop 
+;	 if delta time matching threshold is below 24 hrs
+
+;Check to make sure the map was not from too long ago so that incorrect associations won't be made
+	thisdeltatlastfound=thissmart[0].tim-tlastarsfound
+	if thisdeltatlastfound ge params.tlastfoundthresh then begin
+;Resets the tracking		
+		undefine,ars1
+	endif
+
 	
 	maxtrackid=state.maxtrackid
 	
@@ -81,11 +100,8 @@ endif else begin
 ;to guard against a crash when this variable is checked for, if there are no ARs found in an initial YAFTA run
 	tlastarsfound=0.
 	maxtrackid=0.
+	ip1=0l
 endelse
-
-
-if data_type(inparams) eq 8 then params=inparams $
-	else params=ar_loadparam(fparam=fparam) ;get the default SMART parameter list
 
 
 
@@ -94,6 +110,11 @@ if data_type(inparams) eq 8 then params=inparams $
 imgsz=size(mags,/dim)
 nx=imgsz[0]
 ny=imgsz[1]
+if n_elements(imgsz) eq 2 then begin
+	outsingle={mags:mags,smmask:smmask,thissmart:thissmart,mdimetastrar:mdimetastrar}
+	print,'ONLY ONE FILE TO TRACK. ABORTING.'
+	return,''
+endif
 nt=imgsz[2]
 
 
@@ -150,7 +171,7 @@ endif else begin
 ;Save the time that ARs were last found
 	tlastarsfound=thissmart[i].tim
 
-	ip1=i+1
+	ip1=ip1+1l
 	ars2.step = ip1
 	
 endelse
@@ -161,6 +182,8 @@ print,'line 131'
     n_ar1 = n_elements(ars1)
 
     n_ar2 = n_elements(ars2)
+
+help,n_ar1,n_ar2
 
 
     possible_match = 0          ; default assumption
@@ -180,7 +203,9 @@ print,'line 138'
        if (step2 - step1 ne 1) then possible_match = 0 ; not consecutive
 
 ;Update Max Label variable
-		maxtrackid = maxtrackid > max(ars1)
+		maxtrackid = maxtrackid > max(ars1.LABEL)
+
+help,maxtrackid
 
 
     endif
@@ -232,7 +257,7 @@ print,'line 170'
 			thisyaftastr[wsmid].yaftaid=ars2[ys].label
 			thisyaftastr[wsmid].src=ars2[ys].src
 			thisyaftastr[wsmid].trm=ars2[ys].trm
-			
+			thisyaftastr[wsmid].step=ars2[ys].step
 		endfor
 
 print,'line 185'
@@ -297,10 +322,11 @@ if n_elements(ars1) eq 0 then ars1=''
 
 ;Update the STATE variable and output it through the procedural call.
 
-state={mgram1:mgram1,ar_mask1:ar_mask1,ars1:ars1,tlastarsfound:tlastarsfound,maxtrackid:maxtrackid}
+state={mgram1:mgram1,ar_mask1:ar_mask1,ars1:ars1,tlastarsfound:tlastarsfound,maxtrackid:maxtrackid,ip1:ip1}
 
+help,state,/str
 
-outstruct=thisyaftastrarr
+if n_elements(thisyaftastrarr) gt 0 then outstruct=thisyaftastrarr else outstruct=''
 
 return,outstruct
 
