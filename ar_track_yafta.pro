@@ -139,7 +139,7 @@ print,'SM MAX MASK = ',max(ar_mask2)
 print,'SM NARS = ',n_elements(uniqpx(ar_mask2))-1
 print,'NARS SM META = ',n_elements(thisarmeta)
 
-	create_features, mags_i, ar_mask2, ars2, dx=params.yaftadx, min_size=params.yaftaminsize, peakthreshold=params.yaftapeakthresh
+	create_features, abs(mags_i), ar_mask2, ars2, dx=params.yaftadx, min_size=params.yaftaminsize, peakthreshold=params.yaftapeakthresh
 
 
 ;If no features were found to track then keep track of how much time has elapsed since features were last found
@@ -215,7 +215,7 @@ print,'line 148'
 
     if (possible_match eq 1) then begin
 
-       match_features_v01, ars1, ars2, ar_mask1, ar_mask2, mgram1, mags_i, old_max_label = maxtrackid
+       match_features_v01, ars1, ars2, ar_mask1, ar_mask2, abs(mgram1), abs(mags_i), old_max_label = maxtrackid
 
 
        orig_ars2 = ars2
@@ -286,15 +286,21 @@ print,'line 198'
 
 
     if (n_ar2 gt 0) then begin
-		ars1 = temporary(ars2)
 
 ;Concatenate current AR meta tracking info with array of previous ARs meta info
 print,'line 208'
 
-       if (n_elements(all_ars) eq 0) then  all_ars = ars1 $
+;!!!!!!!TEMP this is a hack... Need to make the output structure array of ARS1 correspond to the magnetograms. So, need to read in the last one from yesterday, then write that one out to the proper magnetogram file.
+;ARS1 needs to be read through match struct to get its TRM number updated
 
+if n_elements(ars1) ne 0 then begin
 
-       else all_ars = [all_ars, ars1]
+	if (n_elements(all_ars) eq 0) then  all_ars = ars1 $
+		else all_ars = [all_ars, ars1]
+endif
+
+	ars1 = temporary(ars2)
+
 
 
 ;Plot the AR detections with the persistent tracking names
@@ -311,7 +317,7 @@ print,'line 215'
 			if n_elements(plotdir) eq 1 then window_capture,file=plotdir+thissmart[i].maskfile
 		endif
 
-	endif
+    endif
 
 endfor  ; ends loop over a given day's data
 
@@ -322,11 +328,17 @@ if n_elements(ars1) eq 0 then ars1=''
 
 ;Update the STATE variable and output it through the procedural call.
 
-state={mgram1:mgram1,ar_mask1:ar_mask1,ars1:ars1,tlastarsfound:tlastarsfound,maxtrackid:maxtrackid,ip1:ip1}
+state={mgram1:mgram1,ar_mask1:ar_mask1,ars1:ars1,tlastarsfound:tlastarsfound,maxtrackid:maxtrackid,ip1:ip1,all_ars:all_ars}
 
 help,state,/str
 
-if n_elements(thisyaftastrarr) gt 0 then outstruct=thisyaftastrarr else outstruct=''
+;if n_elements(thisyaftastrarr) gt 0 then outstruct=thisyaftastrarr else outstruct=''
+
+outstruct=replicate(yaftastrblank,n_elements(all_ars))
+outstruct.yaftaid=all_ars.label
+outstruct.src=all_ars.src
+outstruct.trm=all_ars.trm
+outstruct.step=all_ars.step
 
 return,outstruct
 
