@@ -151,7 +151,7 @@ for i=1,nmask do begin
 ;Where are values within the detection boundary
    wval=where(thismask eq i)
    if wval[0] eq -1 then begin
-      status[i]=4
+      status[i-1]=4
       continue
    endif
 
@@ -168,6 +168,9 @@ for i=1,nmask do begin
 
 ;The basic positions were calculated without incident
    status[i-1]=7
+
+;Fill position structure
+   strarr[i-1]=arstr
 
 if not keyword_set(nosigned) then begin
    if wpos[0] eq -1 then arposstr=blankstr else $
@@ -188,7 +191,7 @@ if wneg[0] eq -1 and wpos[0] eq -1 then status[i-1]=3
 
 endfor
 
-outstr=arstr
+outstr=strarr
 
 return,outstr
 
