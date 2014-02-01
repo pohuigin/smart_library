@@ -17,12 +17,15 @@
 ;	4. 	Thus to isolate only the core detections and have them increment by 1 (instead of 100), one would do: core_mask = ceil( ( ( combined_mask - 3. ) > 0 ) / 100. )
 ;
 
-function ar_detect_core, inmap,smartmask=insmartmask, doprocess=doprocess, $
+function ar_detect_core, inmap,smartmask=insmartmask, nosmart=nosmart, $
+	doprocess=doprocess, $
 	params=inparams, fparam=fparam, doplot=doplot, $
 	mapproc=mapproc, pslmaskmap=outpslmaskmap, status=status, $
 	cosmap=cosmap,limbmask=limbmask,_extra=_extra
 
 if keyword_set(doplot) then doplot=1 else doplot=0
+
+if keyword_set(nosmart) then nosmart=1 else nosmart=0
 
 ;!!! need to cross calibrate with HMI to find the correct parameters to use
 
@@ -33,7 +36,7 @@ if keyword_set(doplot) then doplot=1 else doplot=0
 
 
 maporig=inmap
-smartmask=insmartmask
+if not nosmart then smartmask=insmartmask
 
 status=-1
 
@@ -62,22 +65,24 @@ coremapmask=mapproc
 coremapmask.data=blank
 outpslmaskmap=coremapmask
 
-if max(smartmask) eq 0 then begin
-	;No detections were found by normal SMART run
-	status=0
-	return,coremapmask
-endif
+;Initialise mask map
+mapmsk=mapproc
+
+if not nosmart then begin
+	if max(smartmask) eq 0 then begin
+		;No detections were found by normal SMART run
+		status=0
+		return,coremapmask
+	endif
 
 ;Make a MAP structure from the SMART data.
-mapmsk=mapproc
-mapmsk.data=smartmask
-
+	mapmsk.data=smartmask
 ;!!!TEMP -> turns out it was because I accidentally did bytscl() instead of byte()
 ;!!!For some reason	the MAPMSK doesn't have integer values 1,2,3...
 ;Add a note about this to the dataset I have online in the blog post...
+	mapmsk.data=ar_bytescl2index(mapmsk.data)
 
-mapmsk.data=ar_bytescl2index(mapmsk.data)
-
+endif else mapmsk.data=blank
 
 rsgrad=params.smoothphys ;radius of SG in Mm
 smoothhwhm=rsgrad*params.cmpmm/ar_pxscale(mapproc,/cmppx) ;the smoothing gaussian kernal HWHM

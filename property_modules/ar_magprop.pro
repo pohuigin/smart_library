@@ -1,10 +1,16 @@
 ;Input a processed data map and mask
+;cosine correction for magnetic field values should already be done
 ;The tot. area, pos. area, neg. area, and
 ;	total, signed, fractional signed, negative, and positive flux
 ;	are determined
 ;
+;STATUS = output status array keyword (one status for each AR)
+;		0: initialised value
+;		7: Everything went swimmingly, and there should be valid magnetic properties for each AR
+;		1: No ARs were present in the mask! Should only happen if a blank array was read in
 
-function ar_magprop, map=inmap, mask=inmask, cosmap=incosmap, params=inparams
+function ar_magprop, map=inmap, mask=inmask, cosmap=incosmap, params=inparams, status=status
+status=0
 
 mask=inmask
 map=inmap
@@ -26,6 +32,12 @@ if data_type(mask) ne 8 then begin
    maskstr=map & maskstr.data=mask & mask=maskstr
 endif
 nmask=max(mask.data)
+
+;Check that there are ARs present in the mask
+if nmask eq 0 then begin 
+	status=1
+	return,blankstr
+endif
 
 strarr=replicate(blankstr,nmask)
 

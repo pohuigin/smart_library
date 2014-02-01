@@ -1,0 +1,55 @@
+#The comment character is '#' and the delimiter character is ';'.
+#Active Region Detection Parameters (some from higgins et al. 2011)
+#Some are new for HMI and not discussed in the paper... to be published...
+#
+#This version is specifically for generating simple SMART2 AR detections 
+#for HMI rebinned to 1kx1k
+#(not producing mag properties, core detections, etc)
+#
+#The detection parameters smooththresh & magthresh are determined by 
+#running PLOT_HMI_CROSSCAL_RESID.PRO to determine the optimal values 
+#to match the MDI detections 201004-201008 using the MDI parameter
+#file: ar_param_run2.0.20130828.combined.txt
+#See talk: SMART2_THRESHOLDS
+#
+#Parameter; Value; Type; Comment
+#
+#These may be used if a FITS header is missing
+hmi_dx; 0.50430298; F; arcsecs per px in x direction
+hmi_dy; 0.50430298; F; arcsecs per px in y direction
+hmi_rsun; 945.87290; F; radius of Sun in arcsecs 
+#
+#Switches
+doproject; 0; I; do the detection and area calculation in a projected equal shape or area space (projects and then unprojects)
+docosmicray; 1; I; do cosmic ray detection and fill in with NaN
+domedianfilt; 0; I; process the magnetogram using median smoothing to help with noise (seems to cause noise detections at the limb!)
+#
+#Magnetogram Processing
+cosmicthresh; 5000.; F; A hard threshold for detecting cosmic rays
+medfiltwidth; 3.; F; the width of a box to use to perform median filter on magnetogram
+#
+#Projection Parameters
+threshlon; 90.; F; the deg. to LOS to go out to for the projection
+projscl; 1.5; F; the fractional increase/decrease in image size for the projected image
+#
+#HMI SMART detection based on pixel size determined from map structure and supergranule physical size
+#smooth and mag thresholds determined by minimising the difference in overlap between HMI and MDI detections
+smoothphys; 16.; F; Physical gaussian smoothing HWHM in Mm. The radius of a characteristic supergranule 
+smooththresh; 15.0; F; a segmentation threshold used in processing magnetograms (for 1kx1k gaussian smoothed; determined from plot_hmi_crosscal_resid.pro by comparing HMI and MDI detection masks)
+magthresh; 350.0; F; a secondary segmentation threshold (for MDI) used to find all flux fragments in an image
+#
+#HMI Core detection: use PSLs and strong field to detect the flaring cores of ARs
+strongthresh; 230.0; F; a segmentation threshold to detect strong field fragments which are then dilated to form the 'cores' of ARs.
+polethresh; .8; F; imbalanced fraction of total area covered by a given (+ or -) polarity (=abs(npos-nneg)/abs(npos+nneg)), below which, the detection will be considered multipolar (core passes the flux balance test)
+#
+#Physical Constants and Handy Numbers
+cmpmm; 1d16; F; Number centimeters in a mega meter
+nan; -NaN; F; handy filler value for not-a-number situations
+#
+#Not Used Currently
+#smoothpole; 5.; F; Threshold for polarity blob counting. smoothing radius/FWHM in pixels for AR prior to polarity counting
+#threshpole; .1; F; fraction of total area covered by a given (+ or -) polarity, below which, the detection will be considered monopolar
+#gradthreshw; 50.; F; Gradient threshold (for PSL detection?)
+#gradthreshs; 150.; F; Gradient threshold for strong polarity separation lines?
+#mdi_noisethresh; 70.0; F; a noise threshold used in processing MDI magnetograms
+#pdatamag; ~/science/procedures/chole_detect/data/mag/; A; a path pointing to the source data directory for the magnetogram input images

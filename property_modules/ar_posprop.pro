@@ -15,6 +15,7 @@
 ;	2 = No negative pixels found; negative positions not calulated/output
 ;	3 = No positive or nagative pixels found; Shouldn't happen!! (expect crash in this case)
 ;	4 = No detection 'where' values found for detection mask; Shouldn't happen!!
+;	5 = No mask detection pixels found (max(mask)); Shouldn't happen unless you input a blank map!
 ;------------------------------------------------------------------------------>
 
 ;Determine the AR positions, given mask indices
@@ -128,10 +129,17 @@ if data_type(mask) ne 8 then begin
 endif
 nmask=max(mask.data)
 
+if nmask eq 0 then begin
+      status=5
+      return,arstr
+endif
+
 ;Make a status for each AR
 status=fltarr(nmask)
 
 strarr=replicate(blankstr,nmask)
+strarrpos=strarr
+strarrneg=strarr
 
 for i=1,nmask do begin
 
@@ -151,7 +159,7 @@ for i=1,nmask do begin
 ;Where are values within the detection boundary
    wval=where(thismask eq i)
    if wval[0] eq -1 then begin
-      status[i]=4
+      status[i-1]=4
       continue
    endif
 
@@ -169,26 +177,35 @@ for i=1,nmask do begin
 ;The basic positions were calculated without incident
    status[i-1]=7
 
+;Fill position structure
+   strarr[i-1]=arstr
+
 if not keyword_set(nosigned) then begin
    if wpos[0] eq -1 then arposstr=blankstr else $
 ;Fill the position structure for - Positive regions
       ar_posprop_findpos, arposstr, wpos, thisflx, map=map
-   outpos=arposstr
+
+   strarrpos[i-1]=arposstr
 
    if wneg[0] eq -1 then arnegstr=blankstr else $
 ;Fill the position structure for - Negative regions
       ar_posprop_findpos, arnegstr, wneg, thisflx, map=map
-   outneg=arnegstr
+
+   strarrneg[i-1]=arnegstr
 
 endif
 
-if wpos[0] eq -1 then status[i-1]=1
-if wneg[0] eq -1 then status[i-1]=2
-if wneg[0] eq -1 and wpos[0] eq -1 then status[i-1]=3
+	if wpos[0] eq -1 then status[i-1]=1
+	if wneg[0] eq -1 then status[i-1]=2
+	if wneg[0] eq -1 and wpos[0] eq -1 then status[i-1]=3
+	
+	strarr[i-1]=arstr
 
 endfor
 
-outstr=arstr
+outstr=strarr
+outpos=strarrpos
+outneg=strarrneg
 
 return,outstr
 
