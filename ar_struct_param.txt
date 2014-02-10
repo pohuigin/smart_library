@@ -7,3 +7,7 @@ ar_detect; A,I,LL,D,D,D,D,D,D,D,D; datafile,arid,narpx,arpxposx,arpxposy,arhcpos
 ar_chk_core; A,A,A,L,L,L,L,L,L; datafile,maskfile,date,tim,ncore,npsl,nsmart,nsmconn,status; Full-disk information for core detections. See RUN_SMART2_MDIDETECT_CORE_ALL
 ar_detect_core; A,L,L,L,L,L,L,A,D,D,D,D,D,D,D,D; datafile,arid,narpx,narpslpx,narpsl,npx_conn,ncore_conn,arid_conn,arpxposx,arpxposy,arhcposx,arhcposy,arpxwidthx,arpxwidthy,arhcwidthx,arhcwidthy; Basic information about each detected AR core. See RUN_SMART2_MDIDETECT_CORE_ALL
 ar_track_yafta; A,L,L,L,L,L; datafile,step,arid,yaftaid,src,trm; Tracking information obtained from YAFTA. Indicates if the feature merged, split, emerged, dissappeared, and its persistent tracking name. See: AR_TRACK_YAFTA 
+#ar_pos;
+#ar_mag;
+ar_magpos; A,I,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,D,D,D,D,D,D,D,D,D,D,D,D,D,D,F,D,I,I; datafile,arid,XCENBND,YCENBND,XCENFLX,YCENFLX,XCENAREA,YCENAREA,HCXBND,HCYBND,HCXFLX,HCYFLX,HCXAREA,HCYAREA,HGLONBND,HGLATBND,HGLONFLX,HGLATFLX,HGLONAREA,HGLATAREA,CARLONBND,CARLONFLX,CARLONAREA,AREABND,POSAREABND,NEGAREABND,POSAREA,NEGAREA,TOTAREA,BMAX,BMIN,BMEAN,TOTFLX,IMBFLX,FRCFLX,NEGFLX,POSFLX,BIPOLESEP,AREAFRAC,pos_status,status; Combined magnetic and position properties that are saved into CSV files like 'SMART2_CORE_MAGPROP...txt'
+ar_chaincodehek; L,L,L,A,A; bound_ccnsteps,bound_ccstartc1,bound_ccstartc2,bound_chaincode,chaincodetype; HEK fields for AR chain code to be loaded into a structure. converted to VO event and loaded into the HEK

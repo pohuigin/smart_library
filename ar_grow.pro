@@ -7,7 +7,8 @@
 ;If RADIUS is set then the FWHM of the gaussian will be half that.
 ;If FWHM is set, then RADIUS will be twice that.
 
-function ar_grow, arr, radius=radius, gaus=gaus, fwhm=fwhm, _extra=_extra, kernal=outkernal
+function ar_grow, arr, radius=radius, gaus=gaus, fwhm=fwhm, _extra=_extra, $
+	kernal=outkernal, inkernal=inkernal
 
 arr0=arr
 
@@ -36,6 +37,11 @@ rcoord=shift(rcoord,[-1,-1])
 
 struc[where(rcoord le radius0)]=1.
 
+;Check for input kernal
+if n_elements(inkernal) gt 0 then begin
+	struc=inkernal
+endif
+
 outkernal=struc
 
 ;stop
@@ -56,6 +62,13 @@ if keyword_set(gaus) then begin
 
 	;Normalize GSTRUC so that the volume is 1
 	gstruc=gstruc/total(gstruc)
+
+;Check for input kernal
+	if n_elements(inkernal) gt 0 then begin
+		gstruc=inkernal
+	endif
+
+
 	outkernal=gstruc
 
 	grownarr=CONVOL( arr0, gstruc, _extra=_extra); < 1.

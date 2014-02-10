@@ -6,7 +6,7 @@ if n_elements(map) lt 1 then begin
 	params=ar_loadparam()
 	if keyword_set(mdi) then $
 		map={dx:params.mdi_dx,dy:params.mdi_dy,rsun:params.mdi_rsun} $
-		else begin & print,'% AR_MDIPXAREA: Must input MAP structure.' & return,'' & endelse
+		else begin & print,'% AR_PXSCALE: Must input MAP structure.' & return,'' & endelse
 endif
 
 ;Calculate the area of a pixel in Mm^2

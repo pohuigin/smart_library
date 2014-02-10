@@ -1,0 +1,29 @@
+#A parameter file for inputing standard SMART info into HEK VO Events.
+#This file is for SMART Cores detected with MDI.
+#param, val, type, meta
+#
+#Input for the 'parent' HEK structure
+#reference_names0; Higgins et al. (2013); A; The smart paper 
+#reference_links0; http://adsabs.harvard.edu/abs/2011AdSpR..47.2105H; A; ADS link
+#reference_types0; html; A; type of reference?
+description; An active region core. This detection includes a polarity separation line with strong magnetic fields on either side.; A; description
+#citations; A; ??
+#
+#Input for the 'required' HEK structure
+#
+#Info about module
+EVENT_COORDSYS; UTC-HPC-TOPO; A; position unit system
+EVENT_COORDUNIT; arcsec; A; position units
+FRM_CONTACT; pohuigin at gmail dot com; A; contact address
+FRM_HUMANFLAG; false; A; Did a human input it?
+FRM_IDENTIFIER; phiggins; A; HEK user name
+FRM_INSTITUTE; Trinity College Dublin, Ireland; A; name of institute
+FRM_NAME; SolarMonitor Active Region Tracker (SMART); A; name of module
+FRM_URL; http://pohuigin.wordpress.com/smart-v2-ar-cores; A; documentation of algorithm
+#
+#Info about data
+OBS_OBSERVATORY; SOHO; A; observatory
+OBS_CHANNELID; V band; A; wavelength band of observation
+OBS_INSTRUMENT; MDI; A; instrument
+OBS_MEANWAVEL; 6767.8; F; number of angstroms for MDI absorption line
+OBS_WAVELUNIT; Angstroms; A; unit of wavelength
