@@ -115,7 +115,7 @@ if n_elements(incosmap) eq 0 then cosmap=ar_cosmap(map) $
 pxmmsq=ar_pxscale(map,/mmsqr)
 pxcmsq=ar_pxscale(map,/cmsqr)
 
-blankstr={xcenbnd:0d, ycenbnd:0d, xcenflx:0d, ycenflx:0d, xcenarea:0d, ycenarea:0d, $
+blankstr={arid:0,xcenbnd:0d, ycenbnd:0d, xcenflx:0d, ycenflx:0d, xcenarea:0d, ycenarea:0d, $
           hcxbnd:0d, hcybnd:0d, hcxflx:0d, hcyflx:0d, hcxarea:0d, hcyarea:0d, $
           hglonbnd:0d, hglatbnd:0d, hglonflx:0d, hglatflx:0d, hglonarea:0d, hglatarea:0d, $
           carlonbnd:0d,  carlonflx:0d,  carlonarea:0d}
@@ -128,12 +128,16 @@ if data_type(mask) ne 8 then begin
 endif
 nmask=max(mask.data)
 
+if nmask lt 1 then return, blankstr
+
 ;Make a status for each AR
 status=fltarr(nmask)
 
 strarr=replicate(blankstr,nmask)
 
 for i=1,nmask do begin
+
+	strarr[i-1].arid=i
 
 ;Zero pixels outside of detection boundary
    thismask=mask.data
@@ -171,6 +175,8 @@ for i=1,nmask do begin
 
 ;Fill position structure
    strarr[i-1]=arstr
+   
+	strarr[i-1].arid=i
 
 if not keyword_set(nosigned) then begin
    if wpos[0] eq -1 then arposstr=blankstr else $

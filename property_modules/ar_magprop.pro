@@ -24,7 +24,7 @@ if n_elements(incosmap) eq 0 then cosmap=ar_cosmap(map) $
 pxmmsq=ar_pxscale(map,/mmsqr)
 pxcmsq=ar_pxscale(map,/cmsqr)
 
-blankstr={areabnd:0d, posareabnd:0d, negareabnd:0d, posarea:0d, negarea:0d, totarea:0d, $
+blankstr={arid:0,areabnd:0d, posareabnd:0d, negareabnd:0d, posarea:0d, negarea:0d, totarea:0d, $
           bmax:0d, bmin:0d, bmean:0d, $
           totflx:0d, imbflx:0d, frcflx:0d, negflx:0d, posflx:0d}
 
@@ -42,6 +42,8 @@ endif
 strarr=replicate(blankstr,nmask)
 
 for i=1,nmask do begin
+
+	strarr[i-1].arid=i
 
 ;Zero pixels outside of detection boundary
    thismask=mask.data
@@ -81,6 +83,7 @@ for i=1,nmask do begin
    wposbnd=where(thisdat gt 0)
    if wposbnd[0] eq -1 then noposbnd=1
 
+	strarr[i-1].arid=i
 
 ;Magnetic moments calculated for values within boundary [G]
    strarr[i-1].bmax=max(thisdat[wval])

@@ -11,9 +11,16 @@ if wid[0] eq -1 then message,'% AR_STRUCT_INIT: Structure ID not found in '+ar_g
 thisparam=paramstruct[wid]
 
 format=thisparam.format
+formatarr=str_sep(format,',')
 tags=str_sep(thisparam.tags,',')
 
-create_struct,strblank,'',tags,format2create_struct(format)
+;if n_elements(tags) gt 20 then begin
+;	create_struct,strblank,'',tags[0:19],format2create_struct(strjoin(formatarr[0:19],','))
+;	create_struct,strblank2,'',tags[20:*],format2create_struct(strjoin(formatarr[20:*],','))
+;	strblank=merge_struct(strblank,strblank2)
+;endif else begin
+	create_struct,strblank,'',tags,format2create_struct(format)
+;endelse
 
 outstrblank=strblank
 

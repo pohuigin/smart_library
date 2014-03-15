@@ -14,16 +14,16 @@ mdi_level; 1.8; F; prepped level of the MDI data used (LMSAL data archive)
 #
 #Switches
 doproject; 0; I; do the detection and area calculation in a projected equal shape or area space (projects and then unprojects)
-docosmicray; 1; I; do cosmic ray detection and fill in with NaN
-domedianfilt; 1; I; process the magnetogram using median smoothing to help with noise (seems to cause noise detections at the limb!)
+docosmicray; 0; I; do cosmic ray detection and fill in with NaN
+domedianfilt; 0; I; process the magnetogram using median smoothing to help with noise (seems to cause noise detections at the limb!)
 #
 #Magnetogram Processing
 cosmicthresh; 5000.; F; A hard threshold for detecting cosmic rays
 medfiltwidth; 3.; F; the width of a box to use to perform median filter on magnetogram
 #
 #Projection Parameters
-threshlon; 90.; F; the deg. to LOS to go out to for the projection
-projscl; 1.5; F; the fractional increase/decrease in image size for the projected image
+threshlon; 80.; F; the deg. to LOS to go out to for the projection
+projscl; 1.6; F; the fractional increase/decrease in image size for the projected image -set to ~pi/2
 #
 #MDI SMART detection based on pixel size determined from map structure and supergranule physical size
 smoothphys; 16.; F; Physical gaussian smoothing HWHM in Mm. The radius of a characteristic supergranule 
@@ -43,6 +43,11 @@ yaftadx; 1.433E8; F; MDI Full Disk pixel size [cm]
 yaftaminflux; 1.; F; if it has less flux, it ain't an AR! [Mx]
 yaftabipolethresh; 0.; F; need at least *some* minority flux [fraction]
 tlastfoundthresh;43200.0;F; The maximum time that can elapse with no detections being found before the tracking resets. (Allows for a couple bad datas with no detections, so as not to reset the tracking all the time.)
+#
+#AR magnetic property calculation parameters
+r_kernsz; 10; I; the FWHM of the smoothing kernal for calculating Schrijver R value
+psl_grad; 250.; F; a gradient threshold for determining the location of strong-gradient PSL
+
 #
 #Physical Constants and Handy Numbers
 cmpmm; 1d16; F; Number centimeters in a mega meter
