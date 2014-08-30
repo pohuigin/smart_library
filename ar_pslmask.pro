@@ -9,7 +9,7 @@
 ;			2 - no positive or negative pixels found above threshold
 ;			3 - no overlap between dilated positive and negative masks
 
-function ar_pslmask, data, radius=inrad, thresh=inthresh, status=status
+function ar_pslmask, data, radius=inrad, thresh=inthresh, status=status, dothin=dothin
 status=0
 
 if n_elements(inrad) eq 1 then rad=inrad else rad=5.
@@ -56,6 +56,29 @@ endif
 
 outmsk=blank
 outmsk[wover]=1.
+
+if keyword_Set(dothin) then begin
+
+outmsk=fix(thin(outmsk)>0<1)
+
+;	sepblob=label_region(outmsk)
+
+;	outmskthin=blank
+
+;	for i=1,max(sepblob) do begin
+	
+;		wthis=where(sepblob eq i)
+;		thisthin=blank
+;		thisthin[wthis]=1
+
+;		outmskthin=outmskthin+thin(thisthin) ;,/prune
+;Prune only works for closed paths :/ ...can't use.
+
+;	endfor
+
+;	outmsk=outmskthin
+
+endif
 
 status=1
 

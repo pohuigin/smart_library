@@ -1,12 +1,15 @@
 ;Out put a chain code for each AR in the mask.
 ;Uses HEK specifications
+;
+;subsamp: set to number of pixels to skip. e.g., to take every tenth, set to 10.
+;
 ;STATUS:
 ;		0 = initialised value
 ;		1 = No ARs found in mask
 
 ;----------------------------------------------------------------------------->
 
-function ar_chaincode,map,mask,arstruc=arstruc,params=params,dxdy=indxdy,xcyc=inxcyc, $
+function ar_chaincode,map,mask, subsamp=subsamp,arstruc=arstruc,params=params,dxdy=indxdy,xcyc=inxcyc, $
 	hekstrout=hekstrout, hekstructhc=hekstructhc, hekstructpx=hekstructpx, status=status, aridsout=arids
 status=0
 
@@ -85,9 +88,15 @@ for i=0,nar-1 do begin
 	wmin=wchain[(where(rchain eq min(rchain)))[0]]
 
 ;get the px chain code coordinates
-	pxthischain=ar_chaincode_link(chainmask,wmin,xx*chainmask,yy*chainmask,maxjump=5)
-	xthischain=pxthischain[0,*]
-	ythischain=pxthischain[1,*]
+	pxthischain=ar_chaincode_link(chainmask,wmin,xx*chainmask,yy*chainmask,maxjump=5, subsamp=subsamp, subchain=subchain)
+
+	if n_elements(subchain) ne 0 then begin
+		xthischain=subchain[0,*]
+		ythischain=subchain[1,*]
+	endif else begin
+		xthischain=pxthischain[0,*]
+		ythischain=pxthischain[1,*]
+	endelse
 
 if dohc then begin
 ;convert to HC
@@ -117,8 +126,10 @@ endif
 
 endfor
 
-
-
+;plot_image,mask
+;setcolors,/sys
+;ar_plot_chain,hcchainstring,/over,color=!red
+;stop
 
 return,1
 

@@ -8,13 +8,14 @@
 ;
 ;Keywords:
 ;	MAXLIMB = set to degrees from disk centre at which to crop the limb
+;	REMOZEROS = includes pixels eq to 0 in the 'non-finite' group and interpolates over them
 
-function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, nocosmicray=nocosmicray, $
-	nocosine=nocosine, nofilter=nofilter, nofinite=nofinite, noofflimb=noofflimb, norotate=norotate, fparam=fparam, params=inparams, $
+function ar_processmag, inmap, limbmask=limbmask, cosmap=cosmap, rrdeg=rrdeg, nocosmicray=nocosmicray, $
+	nocosine=nocosine, nofilter=nofilter, nofinite=nofinite, remozeros=remozeros, noofflimb=noofflimb, norotate=norotate, nozeroedge=nozeroedge, fparam=fparam, params=inparams, $
 	maxlimb=inmaxlimb
 
 map=inmap
-dat=map.data
+dat=float(map.data)
 imgsz=size(dat,/dim)
 
 if data_type(inparams) eq 8 then param=inparams else param=ar_loadparam(fparam=fparam)
@@ -41,14 +42,32 @@ if param.docosmicray and not keyword_set(nocosmicray) then begin
 	endif
 endif
 	
-
 ;Clean NaNs
 if not keyword_set(nofinite) then begin
 	wnan=where(finite(dat) ne 1)
-	if wnan[0] ne -1 then begin
-		dat[wnan]=-9999.
+
+;includes 0-value pixels as 'missing'
+	if keyword_set(remozeros) then begin
+		wzeros=where(dat eq 0)
+		if wnan[0] eq -1 then begin
+			if wzeros[0] eq -1 then wmiss=-1 else wmiss=wzeros
+		endif else begin
+			if wzeros[0] eq -1 then wmiss=wnan else wmiss=[wnan,wzeros]
+		endelse
+		dat[wmiss]=-9999.
 		fill_missing, dat, -9999.,1
-	endif
+	endif else begin	
+		if wnan[0] ne -1 then begin
+			dat[wnan]=-9999.
+			fill_missing, dat, -9999.,1
+		endif
+	endelse
+endif
+
+;get rid of crazy arbitrary values at the edge of the image
+if not keyword_set(nozeroedge) then begin
+	wblankpx=where(dat eq dat[0,0])
+	if wblankpx[0] ne -1 then dat[wblankpx]=0.
 endif
 
 ;Get the cosine map and off-limb pixel map using WCS
@@ -80,7 +99,8 @@ if not keyword_set(nocosine) then begin
 	dat=dat*cosmap
 endif
 
-map.data=dat
+add_prop,map,data=dat,/repl
+;map.data=dat
 
 ;Rotate solar north = up
 if not keyword_set(norotate) then begin

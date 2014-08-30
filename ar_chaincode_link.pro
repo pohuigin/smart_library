@@ -1,6 +1,6 @@
 ;Make a x,y chain code, given a thinned mask
 
-function ar_chaincode_link,chainmask,wstart,xmask,ymask, maxjump=inmaxjump
+function ar_chaincode_link,chainmask,wstart,xmask,ymask, maxjump=inmaxjump, subsamp=subsamp, subchain=subchain
 
 if n_elements(inmaxjump) ne 0 then maxjump=inmaxjump else maxjump=0
 
@@ -55,8 +55,29 @@ while wbest ne wstart do begin
 
 endwhile
 
+nchain=n_elements(chainarrx)
+
+;Subsample the chain if requested
+if n_elements(subsamp) ne 0 then begin
+	
+;require that subchain be at least 10 points
+	if nchain ge 10.*subsamp then begin
+		indarr=indgen(nchain)
+		wgood=where(indarr mod subsamp eq 0)
+
+		chainarrxs=[chainarrx[wgood],chainarrx[0]]
+		chainarrys=[chainarry[wgood],chainarry[0]]
+		subchain=[transpose(chainarrxs),transpose(chainarrys)]
+
+	endif else begin
+		subchain=[transpose([chainarrx,chainarrx[0]]),transpose([chainarry,chainarry[0]])]
+	endelse
+endif
+
 chainarrx=[chainarrx,chainarrx[0]]
 chainarry=[chainarry,chainarry[0]]
+
+
 
 return,[transpose(chainarrx),transpose(chainarry)]
 

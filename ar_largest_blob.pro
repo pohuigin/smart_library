@@ -2,12 +2,12 @@
 ;Returns MASK with all features zeroed except for the largest
 ;set flux to take the flux weighted largest blob
 
-function ar_largest_blob, inmask, indata, flux=flux,nozero=nozero,narr=narr, nosep=nosep
+function ar_largest_blob, inmask, indata, flux=flux,nozero=nozero,narr=narr, nosep=nosep, _extra=_extra
 
 mask=inmask
 if keyword_set(flux) gt 0 then data=indata
 
-if keyword_set(nosep) then masksep=mask else masksep=LABEL_REGION(mask)
+if keyword_set(nosep) then masksep=mask else masksep=LABEL_REGION(mask, _extra=_extra)
 
 ncont=max(masksep)
 

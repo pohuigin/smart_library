@@ -55,6 +55,9 @@ if n_elements(inkernal) gt 0 then begin
 	struc=inkernal
 endif
 
+wnogood=where(finite(struc) ne 1)
+if wnogood[0] ne -1 then struc[wnogood]=0
+
 outkernal=struc
 
 ;stop
@@ -81,6 +84,8 @@ if keyword_set(gaus) then begin
 		gstruc=inkernal
 	endif
 
+	wnogood=where(finite(gstruc) ne 1)
+	if wnogood[0] ne -1 then gstruc[wnogood]=0
 
 	outkernal=gstruc
 	

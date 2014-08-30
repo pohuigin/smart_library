@@ -100,7 +100,7 @@ end
 
 
 function ar_posprop, map=inmap, mask=inmask, cosmap=incosmap, params=inparams, $
-                     outpos=outpos, outneg=outneg, nosigned=nosigned, status=status
+                     outpos=outpos, outneg=outneg, nosigned=nosigned, status=status, datafile=indatafile
 
 status=0
 mask=inmask
@@ -115,10 +115,18 @@ if n_elements(incosmap) eq 0 then cosmap=ar_cosmap(map) $
 pxmmsq=ar_pxscale(map,/mmsqr)
 pxcmsq=ar_pxscale(map,/cmsqr)
 
-blankstr={arid:0,xcenbnd:0d, ycenbnd:0d, xcenflx:0d, ycenflx:0d, xcenarea:0d, ycenarea:0d, $
+if n_elements(indatafile) ne 0 then begin
+	blankstr={datafile:indatafile[0],arid:0,xcenbnd:0d, ycenbnd:0d, xcenflx:0d, ycenflx:0d, xcenarea:0d, ycenarea:0d, $
           hcxbnd:0d, hcybnd:0d, hcxflx:0d, hcyflx:0d, hcxarea:0d, hcyarea:0d, $
           hglonbnd:0d, hglatbnd:0d, hglonflx:0d, hglatflx:0d, hglonarea:0d, hglatarea:0d, $
           carlonbnd:0d,  carlonflx:0d,  carlonarea:0d}
+endif else begin
+	blankstr={arid:0,xcenbnd:0d, ycenbnd:0d, xcenflx:0d, ycenflx:0d, xcenarea:0d, ycenarea:0d, $
+          hcxbnd:0d, hcybnd:0d, hcxflx:0d, hcyflx:0d, hcxarea:0d, hcyarea:0d, $
+          hglonbnd:0d, hglatbnd:0d, hglonflx:0d, hglatflx:0d, hglonarea:0d, hglatarea:0d, $
+          carlonbnd:0d,  carlonflx:0d,  carlonarea:0d}
+endelse
+
 arstr=blankstr
 arposstr=blankstr
 arnegstr=blankstr

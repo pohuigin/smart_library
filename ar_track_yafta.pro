@@ -63,6 +63,8 @@ mdimetastrar=inmdimetastrar
 
 ;Initialise a blank tracking structure
 yaftastrblank=ar_struct_init(yaftaformat,structid='ar_track_yafta')
+yaftastrarr=replicate(yaftastrblank,n_elements(mdimetastrar))
+yaftastrarr.yaftaid=-1
 
 if data_type(state) eq 8 then begin
 ;This is for a continued run...
@@ -87,9 +89,10 @@ if data_type(state) eq 8 then begin
 ;Resets the tracking		
 		undefine,ars1
 	endif
-
 	
 	maxtrackid=state.maxtrackid
+
+	hasstate=1
 	
 endif else begin
 
@@ -101,6 +104,9 @@ endif else begin
 	tlastarsfound=0.
 	maxtrackid=0.
 	ip1=0l
+
+	hasstate=0
+
 endelse
 
 
@@ -117,8 +123,6 @@ if n_elements(imgsz) eq 2 then begin
 endif
 nt=imgsz[2]
 
-
-
 for i = 0,nt-1 do begin 
 
 ;Pull out the AR meta structure for this time
@@ -126,6 +130,11 @@ for i = 0,nt-1 do begin
 	if wthisarmeta[0] ne -1 then begin
 		thisarmeta=mdimetastrar[wthisarmeta]
 		nsmars=n_elements(wthisarmeta)
+
+;FILL TRACK STRUCTURE
+		yaftastrarr[wthisarmeta].datafile=mdimetastrar[wthisarmeta].datafile
+		yaftastrarr[wthisarmeta].arid=mdimetastrar[wthisarmeta].arid
+
 	endif else nsmars=0
 
 
@@ -177,7 +186,7 @@ endif else begin
 endelse
 
 ;Check if ARs existed previously and if they exist now
-print,'line 131'
+;print,'line 131'
 
     n_ar1 = n_elements(ars1)
 
@@ -189,7 +198,7 @@ help,n_ar1,n_ar2
     possible_match = 0          ; default assumption
 
 ;If previous and current time have ARs, tracking will be attempted	
-print,'line 138'
+;print,'line 138'
 
     if (n_ar1 gt 0) and (n_ar2 gt 0) then possible_match = 1
 
@@ -207,11 +216,13 @@ print,'line 138'
 
 help,maxtrackid
 
+;FILL TRACK STRUCTURE
+		yaftastrarr[wthisarmeta].step=step2
 
     endif
 
 ;Attempt tracking
-print,'line 148'
+;print,'line 148'
 
     if (possible_match eq 1) then begin
 
@@ -223,27 +234,74 @@ print,'line 148'
        orig_armask = ar_mask2
 
 ;Attempt to prevent fragmentation
-print,'line 156'
+;print,'line 156'
 
        merge_fragments, ars2, ar_mask2
 
     endif                       ; ends if check for possible match
 
 ;Save the tracking YAFTA ID, ARID, data file name, and tim into a structure
-	if (n_ar2 gt 0) then begin
-print,'line 162'
 
-if nsmars ne n_ar2 then print,'YAFTA NARS NE SM NARS!!!!'
+	if (n_ar2 gt 0) then begin
+;print,'line 162'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if n_elements(ars2) ne n_elements(wthisarmeta) then begin
+	print,'YAFTA NARS NE SM NARS!!!!'
+	thissmid=mdimetastrar[wthisarmeta].arid
+	thistrackedid=(smmask[*,*,i])[long(strmid(ars2.mask_str,0,12))]
+	match,thissmid,thistrackedid,msmid,mtrackid
+	
+	wthisarmeta=wthisarmeta[msmid]
+
+stop
+endif
+
+
+
+
+if nsmars ne n_ar2 then begin
+
+stop
+	print,'YAFTA NARS NE SM NARS!!!!'
+
+;!!!!!!!!!!NOT SURE IF THIS IS LEGIT!!!
+;check nars in mask
+;choose ars to keep from thisarmeta, from the ars appearing in the tracked mask string
+	thisgoodarid=ar_mask2[strmid(ars2.MASK_STR,0,12)]
+	match,thisarmeta.arid,thisgoodarid,mmetaid,mmaskid
+	thisgoodarmeta=thisarmeta[mmetaid]
+	thisarmeta=thisgoodarmeta
+
+endif
+
+
+
+
 
 		thisyaftastr=replicate(yaftastrblank,n_elements(thisarmeta))
 
 		thisyaftastr.datafile=thisarmeta.datafile
 		thisyaftastr.arid=thisarmeta.arid
 		thisyaftastr.yaftaid=-1		
-print,'line 170'
+;print,'line 170'
 
 ;Loop over ARS2 and find which tracked feature structure corresponds to which SMART detection
-;AR detections with tracking (YAFTA) ID = -1 were not tracked/were disgarded by YAFTA for some reason
+;AR detections with tracking (YAFTA) ID = -1 were not tracked/were discarded by YAFTA for some reason
 
 		for ys=0,n_elements(ars2)-1 do begin
 
@@ -260,7 +318,7 @@ print,'line 170'
 			thisyaftastr[wsmid].step=ars2[ys].step
 		endfor
 
-print,'line 185'
+;print,'line 185'
 		if n_elements(thisyaftastrarr) ne 0 then thisyaftastrarr=[thisyaftastrarr,thisyaftastr] $
 			else thisyaftastrarr=thisyaftastr
 
@@ -268,7 +326,7 @@ print,'line 185'
     
 
 ;Concatenate current mask with array of previous masks
-print,'line 192'
+;print,'line 192'
 
 
     if (n_elements(ar_masks) eq 0) then ar_masks = ar_mask2 $
@@ -276,7 +334,7 @@ print,'line 192'
     else ar_masks = [[[ar_masks]],[[ar_mask2]]]
 
 ;Over write previous arrays with current arrays for the next iteration
-print,'line 198'
+;print,'line 198'
 
 
     mgram1 = temporary(mags_i)
@@ -288,7 +346,7 @@ print,'line 198'
     if (n_ar2 gt 0) then begin
 
 ;Concatenate current AR meta tracking info with array of previous ARs meta info
-print,'line 208'
+;print,'line 208'
 
 ;!!!!!!!TEMP this is a hack... Need to make the output structure array of ARS1 correspond to the magnetograms. So, need to read in the last one from yesterday, then write that one out to the proper magnetogram file.
 ;ARS1 needs to be read through match struct to get its TRM number updated
@@ -304,7 +362,7 @@ endif
 
 
 ;Plot the AR detections with the persistent tracking names
-print,'line 215'
+;print,'line 215'
 
 		if keyword_Set(doplot) then begin
 			loadct,0,/sil
@@ -319,10 +377,20 @@ print,'line 215'
 
     endif
 
+help,all_ars,yaftastrarr
+
+
+;FILL TRACK STRUCTURE
+	yaftastrarr[wthisarmeta].yaftaid=ars1.label
+	yaftastrarr[wthisarmeta].src=ars1.src
+	yaftastrarr[wthisarmeta].trm=ars1.trm
+
 endfor  ; ends loop over a given day's data
 
-print,'line 230'
+;print,'line 230'
 
+;Add the last batch of tracked ARs onto the end of the struct array
+if n_elements(ars1) ne 0 and hasstate eq 0 then all_ars = [all_ars, ars1]
 
 if n_elements(ars1) eq 0 then ars1=''
 
@@ -332,13 +400,24 @@ state={mgram1:mgram1,ar_mask1:ar_mask1,ars1:ars1,tlastarsfound:tlastarsfound,max
 
 help,state,/str
 
-;if n_elements(thisyaftastrarr) gt 0 then outstruct=thisyaftastrarr else outstruct=''
+if n_elements(yaftastrarr) gt 0 then outstruct=yaftastrarr else outstruct=''
 
-outstruct=replicate(yaftastrblank,n_elements(all_ars))
-outstruct.yaftaid=all_ars.label
-outstruct.src=all_ars.src
-outstruct.trm=all_ars.trm
-outstruct.step=all_ars.step
+;outstruct=replicate(yaftastrblank,n_elements(all_ars))
+;outstruct.datafile=thisyaftastrarr.datafile
+;outstruct.arid=thisyaftastrarr.arid
+;outstruct.yaftaid=all_ars.label
+;outstruct.src=all_ars.src
+;outstruct.trm=all_ars.trm
+;outstruct.step=all_ars.step
+
+;outstruct=replicate(yaftastrblank,n_elements(thisyaftastrarr))
+;outstruct.datafile=thisyaftastrarr.datafile
+;outstruct.arid=thisyaftastrarr.arid
+;outstruct.yaftaid=thisyaftastrarr.yaftaid
+;outstruct.src=thisyaftastrarr.src
+;outstruct.trm=thisyaftastrarr.trm
+;outstruct.step=thisyaftastrarr.step
+
 
 return,outstruct
 

@@ -42,6 +42,19 @@ magthresh; 350.0; F; a secondary segmentation threshold (for MDI) used to find a
 strongthresh; 230.0; F; a segmentation threshold to detect strong field fragments which are then dilated to form the 'cores' of ARs.
 polethresh; .8; F; imbalanced fraction of total area covered by a given (+ or -) polarity (=abs(npos-nneg)/abs(npos+nneg)), below which, the detection will be considered multipolar (core passes the flux balance test)
 #
+#YAFTA Tracking Parameters for SMART detections in MDI data
+#Everything is set to ridiculously low thresholds because I want everything that SMART detects to be tracked
+yaftathresh; 1.; F; ignore pixels below this value [G]
+yaftapeakthresh; 1.; F; not sure what this is used for...
+yaftaminsize; 1; I; only track features w/min_size pixels [Npx]
+yaftadx; 3.58E7; F; HMI Full Disk pixel size [cm]
+yaftaminflux; 1.; F; if it has less flux, it ain't an AR! [Mx]
+yaftabipolethresh; 0.; F; need at least *some* minority flux [fraction]
+tlastfoundthresh;43200.0;F; The maximum time that can elapse with no detections being found before the tracking resets. (Allows for a couple bad datas with no detections, so as not to reset the tracking all the time.)
+#
+#EUV Property Parameters
+radpslang; 3; I; the radius to use for averaging the PSL angle over. used in ar_pslangmap.pro
+#
 #Physical Constants and Handy Numbers
 cmpmm; 1d16; F; Number centimeters in a mega meter
 nan; -NaN; F; handy filler value for not-a-number situations

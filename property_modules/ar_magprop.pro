@@ -9,14 +9,14 @@
 ;		7: Everything went swimmingly, and there should be valid magnetic properties for each AR
 ;		1: No ARs were present in the mask! Should only happen if a blank array was read in
 
-function ar_magprop, map=inmap, mask=inmask, cosmap=incosmap, params=inparams, status=status
+function ar_magprop, map=inmap, mask=inmask, cosmap=incosmap, params=inparams, fparam=fparam, status=status, datafile=indatafile
 status=0
 
 mask=inmask
 map=inmap
 
 if data_type(inparams) eq 8 then params=inparams $
-	else params=ar_loadparam() ;get the default SMART parameter list
+	else params=ar_loadparam(fparam=fparam) ;get the default SMART parameter list
 
 if n_elements(incosmap) eq 0 then cosmap=ar_cosmap(map) $
 	else cosmap=incosmap
@@ -24,9 +24,16 @@ if n_elements(incosmap) eq 0 then cosmap=ar_cosmap(map) $
 pxmmsq=ar_pxscale(map,/mmsqr)
 pxcmsq=ar_pxscale(map,/cmsqr)
 
-blankstr={arid:0,areabnd:0d, posareabnd:0d, negareabnd:0d, posarea:0d, negarea:0d, totarea:0d, $
+if n_elements(indatafile) ne 0 then begin
+	blankstr={datafile:indatafile[0],arid:0,areabnd:0., posareabnd:0., negareabnd:0., posarea:0., negarea:0., totarea:0., $
           bmax:0d, bmin:0d, bmean:0d, $
-          totflx:0d, imbflx:0d, frcflx:0d, negflx:0d, posflx:0d}
+          totflx:0., imbflx:0., frcflx:0d, negflx:0., posflx:0.}
+endif else begin
+	blankstr={arid:0,areabnd:0., posareabnd:0., negareabnd:0., posarea:0., negarea:0., totarea:0., $
+          bmax:0d, bmin:0d, bmean:0d, $
+          totflx:0., imbflx:0., frcflx:0d, negflx:0., posflx:0.}
+endelse
+
 
 if data_type(mask) ne 8 then begin
    maskstr=map & maskstr.data=mask & mask=maskstr

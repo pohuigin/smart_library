@@ -95,6 +95,8 @@ datasm=ar_grow(mapproc.data, /gaus, fwhm=smoothhwhm)
 
 ;Pull out the ridge of the gradient map
 ;	ridgemask=ar_ridgemask(datagrad)
+
+;IS THIS USED????
 ridgemask=ar_ridgemask(abs(datasm),thresh=params.smooththresh)
 
 ;Detect PSL by dilating positive and negative blobs
@@ -255,9 +257,46 @@ if doplot then begin
 	contour,arcoresmartcomb,level=0.5, c_color=!white,/over
 	contour,arcoremaskmpoleid,level=0.5, c_color=!black,c_thick=2,/over,c_lines=2
 
-	plot_image, arcoremaskfinal < 10.
+	plot_image, (arcoremaskfinal < 1.) + (ar_core2mask(arcoremaskfinal) < 1.)
 
 	stop
+	
+setplotenv,/ps,xs=20,ys=10,file='ar_detect_core_'+time2file(anytim(systim(/utc)))+'.ps'
+!p.color=0
+!p.background=255
+!p.multi=[0,2,1]
+loadct,0,/sil
+plot_image,magscl(mapproc.data)
+setcolors,/sys,/sil
+contour,mapproc.data,level=[-200,200],c_color=[!green,!red],/over
+contour,datasm,level=[-20,20],c_color=[!green,!red],/over
+;contour,strongblobmask,level=0.5,c_color=!blue,/over
+contour,arcoremask,level=0.5,c_color=!cyan,/over
+
+contour,arcoresmartcomb,level=0.5, c_color=!white,/over
+contour,arcoremaskmpoleid,level=0.5, c_color=!black,/over,c_lines=2
+
+plot_image, (arcoremaskfinal < 1.) + (ar_core2mask(arcoremaskfinal) < 1.)
+closeplotenv
+
+setplotenv,/ps,xs=20,ys=10,file='ar_detect_core_psl_'+time2file(anytim(systim(/utc)))+'.ps'
+!p.color=0
+!p.background=255
+!p.multi=[0,2,1]
+loadct,0,/sil
+plot_image,magscl(mapproc.data)
+setcolors,/sys,/sil
+contour,mapproc.data,level=[-200,200],c_color=[!green,!red],/over
+contour,datasm,level=[-20,20],c_color=[!green,!red],/over
+;contour,strongblobmask,level=0.5,c_color=!blue,/over
+contour,arcoremask,level=0.5,c_color=!cyan,/over
+
+contour,arcoresmartcomb,level=0.5, c_color=!white,/over
+contour,arcoremaskmpoleid,level=0.5, c_color=!black,/over,c_lines=2
+
+plot_image, (pslblobmask*(-1.) + strongblobmask)
+closeplotenv
+	
 endif
 
 

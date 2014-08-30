@@ -27,3 +27,6 @@ OBS_CHANNELID; V band; A; wavelength band of observation
 OBS_INSTRUMENT; MDI; A; instrument
 OBS_MEANWAVEL; 6767.8; F; number of angstroms for MDI absorption line
 OBS_WAVELUNIT; Angstroms; A; unit of wavelength
+#
+#Parameter to determine how many pixels too skip when making the chain code
+chainsubsamp; 10; I; include every Nth pixel in the chain code

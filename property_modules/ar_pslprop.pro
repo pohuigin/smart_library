@@ -28,7 +28,7 @@
 function ar_pslprop, inmap, inmask, refimg, param=param, fparam=fparam, $
 	doproj=indoproj, projscl=inprojscl, dobppxscl=dobppxscl, $
 	outproj=projmag, outscl=projpxscl, outbpscl=projpxscl_bpsep, outmaskproj=projmask, outrefproj=projref, projlimbxy=projlimbxy, $
-	outpslmask=pslmaskt, outgradpsl=gradpsl
+	outpslmask=pslmaskt, outgradpsl=gradpsl, projmaxscale=projmaxscale
 
 magmap=inmap
 mask=inmask
@@ -91,6 +91,13 @@ thispslstr=arpslstr[i-1]
 	thisdat=magmap
 	thisdat.data=magmap.data*thismask
 
+;Check whether there is actually an AR there
+if (where(finite(thisdat.data)))[0] eq -1 or (where(thisdat.data ne 0))[0] eq -1 then begin
+	print,'% AR_PSLPROP: No AR appears to be present in the data!'
+	projmask=-1 & projmag=-1 & projpxscl=-1 & projpxscl_bpsep=-1 & projref=-1 & pslmaskt=-1 & gradpsl=-1
+	return, arpslstr
+endif
+
 ;Take a sub-map around the AR
 	sub_map,maskmap,submask,xran=minmax(where(thismask eq 1) mod imgsz[0])+[-1,1],yran=minmax(where(thismask eq 1)/imgsz[0])+[-1,1],/pixel,/noplot
 	sub_map,thisdat,submag,ref=submask,/noplot
@@ -111,8 +118,8 @@ thispslstr=arpslstr[i-1]
 	bipsepstr=ar_bipolesep(submag)
 
 	if doproj then begin
-	
-		projmag=map_hpc2stg(submag, refimg, projlonlatcent=[0.,0.], projscl=projscl, mask=submask.data,projmask=projmask,/doprojscl, projpxscl=projpxscl, outrefproj=projref, projlimbxy=projlimbxy, status=projstatus)
+
+		projmag=map_hpc2stg(submag, refimg, projlonlatcent=[0.,0.], projscl=projscl, mask=submask.data,projmask=projmask,/doprojscl, projpxscl=projpxscl, outrefproj=projref, projlimbxy=projlimbxy, status=projstatus, projmaxscale=projmaxscale)
 		projmask=round(projmask)
 		
 		if projstatus eq -1 then begin
@@ -197,11 +204,13 @@ thispslstr=arpslstr[i-1]
 ;Might give better stable PSL lengths as AR rotates.
 
 ;Determine the longest PSLs Skeleton length and curvature
-	skelstr=ar_skeleton(pslmaskt_skel,max=2) ;set max eq 2 so that pixels linked by corners wont break the chain
-	if data_type(skelstr) eq 8 then begin
-		wskellong=(where(skelstr.LENGTH eq max(skelstr.LENGTH)))[0]
-		pslcurvature=(skelstr.curvature)[wskellong]
-	endif else pslcurvature=0.
+;	skelstr=ar_skeleton(pslmaskt_skel,max=2) ;set max eq 2 so that pixels linked by corners wont break the chain
+;	if data_type(skelstr) eq 8 then begin
+;		wskellong=(where(skelstr.LENGTH eq max(skelstr.LENGTH)))[0]
+;		pslcurvature=(skelstr.curvature)[wskellong]
+;	endif else pslcurvature=0.
+;!!!!TEMP
+pslcurvature=0.
 
 ;	plot_mag, projmag*projmask
 ;	contour,pslmaskt,level=0.5,/over
