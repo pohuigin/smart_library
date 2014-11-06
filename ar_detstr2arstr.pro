@@ -14,7 +14,7 @@ datas=datafilearr[sort(datafilearr)]
 datau=datas[uniq(datas)]
 nu=n_elements(datau)
 
-for i=0,nu-1 do begin
+for i=0l,nu-1l do begin
 
 	wmatch1=where(datafilearr eq datau[i])
 

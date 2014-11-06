@@ -25,7 +25,7 @@
 ;NOTES:
 ;	1. If /DOPROJ is NOT set, then all outputs labeled 'STG projected' will just be in LOS (HCP) space, corresponding to the input map.
 
-function ar_pslprop, inmap, inmask, refimg, param=param, fparam=fparam, $
+function ar_pslprop, inmap, inmask, refimg, param=inparam, fparam=fparam, $
 	doproj=indoproj, projscl=inprojscl, dobppxscl=dobppxscl, $
 	outproj=projmag, outscl=projpxscl, outbpscl=projpxscl_bpsep, outmaskproj=projmask, outrefproj=projref, projlimbxy=projlimbxy, $
 	outpslmask=pslmaskt, outgradpsl=gradpsl, projmaxscale=projmaxscale
@@ -54,7 +54,7 @@ mask=inmask
 
 imgsz=size(magmap.data,/dim)
 
-param=ar_loadparam(fparam=fparam)
+if data_type(inparam) ne 8 then param=ar_loadparam(fparam=fparam) else param=inparam
 
 
 if n_elements(indoproj) ne 1 then doproj=param.doproject else doproj=indoproj

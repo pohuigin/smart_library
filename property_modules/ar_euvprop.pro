@@ -118,6 +118,10 @@ pslangmap=directional_filter(thispslmask, $
        binfac=1, arrowbin=1, outmag=pslmagnitude)
 
 angdiffmap=abs(loopangmap-pslangmap)/!dtor/2.
+
+;Determine if any PSLs present
+if (where(thispslmask eq 1))[0] eq -1 then continue
+
 angdiffarr=angdiffmap[where(thispslmask eq 1)]
 
 angweights=loopmagnitude[where(thispslmask eq 1)] < 1.
