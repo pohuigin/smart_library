@@ -171,7 +171,7 @@ if n_elements(ars2) eq 0 then begin
 ;Resets the tracking		
 		mgram1 = temporary(mags_i)
 		ar_mask1 = temporary(ar_mask2)
-		undefine,ars1
+		if n_elements(ars1) gt 0 then undefine,ars1
 
 		continue
 	endelse
@@ -365,14 +365,16 @@ endif
 ;print,'line 215'
 
 		if keyword_Set(doplot) then begin
+
+if n_elements(plotdir) eq 1 then setplotenv,file=plotdir+thissmart[i].maskfile,/ps,/eps,ys=15,xs=15
 			loadct,0,/sil
 			display_yafta,magscl(mags[*,*,i]),/asp
 			setcolors,/sys
 			contour,smmask[*,*,i],level=0.5,color=0,thick=1,/over
 			plot_edges, ar_mask1,thick=2
 			plot_labels, ars1
-		
-			if n_elements(plotdir) eq 1 then window_capture,file=plotdir+thissmart[i].maskfile
+if n_elements(plotdir) eq 1 then closeplotenv		
+;			if n_elements(plotdir) eq 1 then window_capture,file=plotdir+thissmart[i].maskfile
 		endif
 
     endif

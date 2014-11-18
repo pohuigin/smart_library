@@ -10,7 +10,7 @@
 ;----------------------------------------------------------------------------->
 
 function ar_chaincode,map,mask, subsamp=subsamp,arstruc=arstruc,params=params,dxdy=indxdy,xcyc=inxcyc, $
-	hekstrout=hekstrout, hekstructhc=hekstructhc, hekstructpx=hekstructpx, status=status, aridsout=arids
+	hekstrout=hekstrout, hekstructhc=hekstructhc, hekstructpx=hekstructpx, status=status, aridsout=arids, fstruct=fstruct
 status=0
 
 ;Check for data types and pull out origin and scaling
@@ -57,7 +57,7 @@ xyrcoord,[0,imgsz],xx,yy
 
 ;Initialise structure to load in chain codes
 
-hekstructpx=ar_struct_init(structid='ar_chaincodehek')
+hekstructpx=ar_struct_init(structid='ar_chaincodehek', fstruct=fstruct)
 hekstructpx=replicate(hekstructpx,nar)
 
 hekstructhc=hekstructpx
