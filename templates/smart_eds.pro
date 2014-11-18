@@ -1,4 +1,4 @@
-pro smart_eds, fmag=fmag, indmag=indmag, fparam=fparam, fhekparam=fhekparam, $
+pro smart_eds, fmag=fmag, indmag=indmag, fparam=fparam, fhekparam=fhekparam, fstruct=fstruct, $
 				write_fits=write_fits, $
 				outroot=outroot, cadence=incadence, $ ; rebin1k=rebin1k, $
 				events=events, error=error, imagerejected=imagerejected, $
@@ -13,8 +13,9 @@ pro smart_eds, fmag=fmag, indmag=indmag, fparam=fparam, fhekparam=fhekparam, $
 ;
 ;	INPUT
 ;			fmag			list of mag files (45s or 720s, B LOS magnetograms)
-;			fparam			file listing all detection parameters
-;			fhekparam		file listing all parameters for making SMART VO events
+;			fparam			a file listing all detection parameters
+;			fhekparam		a file listing all parameters for making SMART VO events
+;			fstruct			a file that describes meta-data structure formats for several routines (e.g., chain code)
 ;			indmag			(OPTIONAL) input index structure corresponding to FITS file
 ;							necessary if fits file only contains 'stub' header
 ;			status			(INPUT/OUTPUT) structure with info from previous runs. May be initialised and input as:
@@ -73,6 +74,10 @@ if file_exist(fparam) ne 1 then message,'Parameter file specified by FPARAM not 
 if data_type(fhekparam) ne 7 or n_elements(fhekparam) ne 1 then message,'Keyword FHEKPARAM must be 1-element string.'
 
 if file_exist(fhekparam) ne 1 then message,'Parameter file specified by FHEKPARAM not found.'
+
+if data_type(fstruct) ne 7 or n_elements(fstruct) ne 1 then message,'Keyword FSTRUCT must be 1-element string.'
+
+if file_exist(fstruct) ne 1 then message,'Parameter file specified by FSTRUCT not found.'
 
 ;Load parameter files
 
@@ -165,7 +170,7 @@ if not noevents then begin
 
 ;make chain code using the 
 
-	dum=ar_chaincode(maskstrrb,detmaskrb,hekstructhc=chainstr,status=chainstatus, subsamp=hekparam.chainsubsamp, params=params)
+	dum=ar_chaincode(maskstrrb,detmaskrb,hekstructhc=chainstr,status=chainstatus, subsamp=hekparam.chainsubsamp, params=params, fstruct=fstruct)
 
 
 
