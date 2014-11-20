@@ -23,7 +23,7 @@ FRM_URL; http://pohuigin.wordpress.com/smart-v2-ar-cores; A; documentation of al
 #
 #Info about data
 OBS_OBSERVATORY; SDO; A; observatory
-OBS_CHANNELID; V band; A; wavelength band of observation
+OBS_CHANNELID; BLOS; A; wavelength band of observation
 OBS_INSTRUMENT; HMI; A; instrument
 OBS_MEANWAVEL; 6173; F; number of angstroms for HMI absorption line
 OBS_WAVELUNIT; Angstroms; A; unit of wavelength
