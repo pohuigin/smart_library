@@ -44,7 +44,7 @@
 
 function ar_track_yafta,state,magstack=inmags,maskstack=insmmask, $
 	mdimeta=inthissmart,smartmeta=inmdimetastrar, $
-	params=inparams, fparam=fparam, $
+	params=inparams, fparam=fparam, fstruct=fstruct, $
 	doplot=doplot, plotdir=plotdir, $
 	outsingle=outsingle 	;out put a single map if there was only one on the day
 								;so that it can be included with the next set and still be useful
@@ -62,7 +62,7 @@ thissmart=inthissmart
 mdimetastrar=inmdimetastrar
 
 ;Initialise a blank tracking structure
-yaftastrblank=ar_struct_init(yaftaformat,structid='ar_track_yafta')
+yaftastrblank=ar_struct_init(yaftaformat,structid='ar_track_yafta', fstruct=fstruct)
 yaftastrarr=replicate(yaftastrblank,n_elements(mdimetastrar))
 yaftastrarr.yaftaid=-1
 
