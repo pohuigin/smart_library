@@ -232,7 +232,13 @@ detstr=strpropdet
 
 if not noevents then begin
 
+;Read in the parameter file
+	param=ar_loadparam(fparam='./fe_param_track.txt')
 
+;Track the blobs
+	trackstr=ar_track_yafta(state,magstack=datastack,maskstack=maskstack, $
+		mdimeta=datastr,smartmeta=thismetaarr, fstruct='./fe_param_struct.txt', $
+		params=param, doplot=1, plotdir='~/science/projects/fe_detector_neal/')
 
 	hekstr=ar_smart2hek(strpropdet, chain=chainstr, map=magproc, params=params, hekparam=hekparam)
 
@@ -257,6 +263,7 @@ error=0
 
 
 
+
 ;Update the in/out status structure
 
 status.sszn=max(strpropdet.SSZN)
@@ -269,7 +276,9 @@ status.chainstatus=strjoin(chainstatus,',')
 status.edserror=error
 
 
-
+status.lastmag=maproc.data
+status.lastmask=detmask
+status.trackstatus=
 
 
 

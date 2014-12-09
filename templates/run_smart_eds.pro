@@ -14,7 +14,7 @@ outroot='./'
 cadence=3600.*6.
 debug=0
 
-status={sszn:0l,imagerejected:0,noevents:0,detstatus:0,posstatus:0,magstatus:0,chainstatus:0,edserror:-1}
+status={sszn:0l,imagerejected:0,noevents:0,detstatus:0,posstatus:0,magstatus:0,chainstatus:0,edserror:-1, lastmag:fltarr(4096,4096)-1., lastmask:fltarr(4096,4096)-1., trackstatus:ar_struct_init(yaftaformat,structid='ar_track_yafta', fstruct='./ar_struct_param.txt'),trackmetasm:{},trackmetadat:{}}
 
 timst=anytim(systim(/utc))
 
